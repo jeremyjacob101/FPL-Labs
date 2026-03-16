@@ -1,2 +1,6 @@
-﻿// For more information see https://aka.ms/fsharp-console-apps
-printfn "Hello from F#"
+﻿open Main
+
+[<EntryPoint>]
+let main argv =
+    addOOOOOBeforeEachLine "Lab-0/InputA.vm" "output.txt"
+    0

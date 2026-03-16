@@ -10,7 +10,7 @@ open System.Reflection
 [<assembly: System.Reflection.AssemblyCompanyAttribute("FPL - Codebase")>]
 [<assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")>]
 [<assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")>]
-[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0beceda121552500da5c95dd9db3bb0d295783d8")>]
+[<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+317e4ae8dd37298f793d2f59cd62677f5c29e658")>]
 [<assembly: System.Reflection.AssemblyProductAttribute("FPL - Codebase")>]
 [<assembly: System.Reflection.AssemblyTitleAttribute("FPL - Codebase")>]
 [<assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")>]
