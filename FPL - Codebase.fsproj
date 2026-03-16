@@ -6,8 +6,8 @@
     <RootNamespace>FPL___Codebase</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup><Compile Include="Lab-0/Main.fs" />
-    <Compile Include="Main.fs" />
+  <ItemGroup>
+    <Compile Include="Lab-0/Main.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
