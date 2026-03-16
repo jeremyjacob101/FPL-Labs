@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="FPL - Codebase">
+    <resource name="FSharpSignatureData.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpOptimizationData.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.FPL - Codebase" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.FPL - Codebase" action="remove"></resource>
+  </assembly>
+</linker>

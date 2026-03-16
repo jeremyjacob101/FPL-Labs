@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "rZul/iGPyPg=",
+  "success": true,
+  "projectFilePath": "/Users/jeremyjacob/Documents/School/25-26/25-26B/Fundamentals of Programming Languages/Labs/Lab 0/FPL - Codebase/FPL - Codebase.fsproj",
+  "expectedPackageFiles": [
+    "/Users/jeremyjacob/.nuget/packages/fsharp.core/10.1.201/fsharp.core.10.1.201.nupkg.sha512"
+  ],
+  "logs": []
+}
