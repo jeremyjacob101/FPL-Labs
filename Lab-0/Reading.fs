@@ -16,6 +16,14 @@ let getOutputFileName () = directoryPath + ".asm"
 let isLogicalCommand command =
     command = "eq" || command = "gt" || command = "lt"
 
+let isMemoryAccessCommand command = command = "push" || command = "pop"
+
+let writeMemoryAccess command segment index =
+    writer.WriteLine("command: " + command + " segment: " + segment + " index: " + string index)
+
+let handlePush segment index = writeMemoryAccess "push" segment index
+let handlePop segment index = writeMemoryAccess "pop" segment index
+
 let handleAdd () = writer.WriteLine "command: add"
 let handleSub () = writer.WriteLine "command: sub"
 let handleNeg () = writer.WriteLine "command: neg"
@@ -31,6 +39,12 @@ let simpleCommandHandler command =
     | "eq" -> handleEq ()
     | "gt" -> handleGt ()
     | "lt" -> handleLt ()
+    | _ -> ()
+
+let memoryAccessCommandHandler command segment index =
+    match command with
+    | "push" -> handlePush segment index
+    | "pop" -> handlePop segment index
     | _ -> ()
 
 let traverseAllVmFiles () =
@@ -49,6 +63,11 @@ let traverseAllVmFiles () =
             let command = parts.[0]
 
             simpleCommandHandler command
+
+            if isMemoryAccessCommand command then
+                let segment = parts.[1]
+                let index = parts.[2]
+                memoryAccessCommandHandler command segment index
 
             if isLogicalCommand command then
                 counter <- counter + 1
