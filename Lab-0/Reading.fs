@@ -11,7 +11,10 @@ let getInputDirectoryPath () =
     printf "Enter directory path: "
     directoryPath <- Console.ReadLine()
 
-let getOutputFileName () = directoryPath + ".asm"
+let getOutputFileName () =
+    let pathParts = directoryPath.Split(Path.DirectorySeparatorChar)
+    let lastPart = pathParts[pathParts.Length - 1]
+    lastPart + ".asm"
 
 let isLogicalCommand command =
     command = "eq" || command = "gt" || command = "lt"
@@ -60,13 +63,13 @@ let traverseAllVmFiles () =
         File.ReadLines file
         |> Seq.iter (fun line ->
             let parts = line.Split(' ')
-            let command = parts.[0]
+            let command = parts[0]
 
             simpleCommandHandler command
 
             if isMemoryAccessCommand command then
-                let segment = parts.[1]
-                let index = parts.[2]
+                let segment = parts[1]
+                let index = parts[2]
                 memoryAccessCommandHandler command segment index
 
             if isLogicalCommand command then
