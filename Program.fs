@@ -1,6 +1,6 @@
-﻿open Reading
+﻿open VMtranslator
 
 [<EntryPoint>]
 let main argv =
-    traverseAllVmFiles ()
+    translate argv[0]
     0
