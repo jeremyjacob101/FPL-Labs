@@ -4,6 +4,9 @@ open System
 open System.IO
 
 let mutable currentFileName = ""
+let mutable labelCounter = 0
+let GENERAL_PURPOSE_REG = "R15" // Temporary register for general use in complex operations
+let TEMP_SEGMENT_BASE = 5 // Base address for temp segment (R5-R12)
 
 type Command =
     | Arithmetic of string
@@ -24,21 +27,47 @@ let pointToPreviousA = [ "A=A-1" ]
 let storeDInTemp tempIndex = [ "@" + tempIndex; "M=D" ]
 let loadTempIntoA tempIndex = [ "@" + tempIndex; "A=M" ]
 
-let GENERAL_PURPOSE_REG = "R15" // Temporary register for general use in complex operations
+// Label counters for incrementing jump locations to ensure there's no overlap
+let nextLabel prefix =
+    labelCounter <- labelCounter + 1
+    prefix + string labelCounter
+
+let writeComparison jumpCommand =
+    let trueLabel = nextLabel "TRUE_"
+    let endLabel = nextLabel "END_"
+
+    popToD
+    @ pointToPreviousA
+    @ [ "D=M-D"
+        "@" + trueLabel // If true
+        "D;" + jumpCommand
+        "@SP" // If false
+        "A=M-1"
+        "M=0"
+        "@" + endLabel // Skip true jump
+        "0;JMP"
+        "(" + trueLabel + ")" // Land for true jump
+        "@SP"
+        "A=M-1"
+        "M=-1"
+        "(" + endLabel + ")" ] // Land for skip jump
 
 let writeArithmetic operation =
     match operation with
     | "add" -> popToD @ pointToPreviousA @ [ "M=D+M" ]
     | "sub" -> popToD @ pointToPreviousA @ [ "M=M-D" ]
     | "neg" -> pointToTop @ [ "M=-M" ]
+    | "and" -> popToD @ pointToPreviousA @ [ "M=D&M" ]
+    | "or" -> popToD @ pointToPreviousA @ [ "M=D|M" ]
+    | "not" -> pointToTop @ [ "M=!M" ]
+    | "eq" -> writeComparison "JEQ"
+    | "gt" -> writeComparison "JGT"
+    | "lt" -> writeComparison "JLT"
     | _ -> []
 
-
-let TEMP_SEGMENT_BASE = 5 // Base address for temp segment (R5-R12)
-
 let getStaticVariableName index = currentFileName + "." + string index
-let getPointerSegmentName index = if index = 0 then "THIS" else "THAT"
 let getTempSegmentAddress index = string (TEMP_SEGMENT_BASE + index)
+let getPointerSegmentName index = if index = 0 then "THIS" else "THAT"
 
 // load the address of (baseSegment + offset) = RAM[BASE] + offset into either A or D, depending on the reg parameter
 let loadOffsetIntoTrueReg baseSegment offset reg =
@@ -49,6 +78,7 @@ let loadOffsetIntoA baseSegment offset =
 
 let loadOffsetIntoD baseSegment offset =
     loadOffsetIntoTrueReg baseSegment offset "D"
+
 // To pop into a segment, we need to calculate the target address first and store it in a temporary register, then pop the value into D, and finally store D into the target address.
 let getPopCommands baseSegment index =
     loadOffsetIntoD baseSegment index
@@ -56,7 +86,6 @@ let getPopCommands baseSegment index =
     @ popToD
     @ loadTempIntoA GENERAL_PURPOSE_REG
     @ [ "M=D" ]
-
 
 let writePush segment index =
     match segment with
