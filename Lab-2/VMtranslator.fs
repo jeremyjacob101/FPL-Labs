@@ -8,6 +8,10 @@ open System.IO
 
 let mutable currentFileName = ""
 let mutable labelCounter = 0
+let mutable currentFunctionName = ""
+
+let FRAME_REG = "R13"
+let RETURN_REG = "R14"
 let GENERAL_PURPOSE_REG = "R15" // Temporary register for general use in complex operations
 let TEMP_SEGMENT_BASE = 5 // Base address for temp segment (R5-R12)
 
@@ -18,6 +22,9 @@ type Command =
     | Label of string
     | GoTo of string
     | IfGoTo of string
+    | Function of string * int
+    | Call of string * int
+    | Return
 
 let stripComments (line: string) =
     let parts = line.Split("//")
@@ -34,6 +41,12 @@ let storeDInTemp tempIndex = [ "@" + tempIndex; "M=D" ]
 let loadTempIntoA tempIndex = [ "@" + tempIndex; "A=M" ]
 
 let getFileScopedLabel label = currentFileName + "." + label
+
+let getFunctionScopedLabel label =
+    if currentFunctionName = "" then
+        getFileScopedLabel label
+    else
+        currentFunctionName + "$" + label
 
 // Label counters for incrementing jump locations to ensure there's no overlap
 let nextLabel prefix =
@@ -74,13 +87,13 @@ let writeArithmetic operation =
     | _ -> []
 
 let writeLabel label =
-    [ "(" + getFileScopedLabel label + ")" ]
+    [ "(" + getFunctionScopedLabel label + ")" ]
 
 let writeGoTo label =
-    [ "@" + getFileScopedLabel label; "0;JMP" ]
+    [ "@" + getFunctionScopedLabel label; "0;JMP" ]
 
 let writeIfGoTo label =
-    popToD @ [ "@" + getFileScopedLabel label; "D;JNE" ]
+    popToD @ [ "@" + getFunctionScopedLabel label; "D;JNE" ]
 
 let getStaticVariableName index = currentFileName + "." + string index
 let getTempSegmentAddress index = string (TEMP_SEGMENT_BASE + index)
@@ -127,6 +140,14 @@ let writePop segment index =
     | "that" -> getPopCommands "THAT" index
     | _ -> [] // Handle other segments as needed
 
+let writeFunction functionName numLocals = []
+
+let writeCall functionName numArgs = []
+
+let writeReturn = []
+
+let writeBootstrap = [ "@256"; "D=A"; "@SP"; "M=D" ] @ writeCall "Sys.init" 0
+
 let translateCommandToAsm command =
     match command with
     | Arithmetic operation -> writeArithmetic operation
@@ -135,6 +156,9 @@ let translateCommandToAsm command =
     | Label label -> writeLabel label
     | GoTo label -> writeGoTo label
     | IfGoTo label -> writeIfGoTo label
+    | Function(functionName, numLocals) -> writeFunction functionName numLocals
+    | Call(functionName, numArgs) -> writeCall functionName numArgs
+    | Return -> writeReturn
 
 let separateCommandToParts (line: string) =
     let parts = line.Split([| ' ' |], StringSplitOptions.RemoveEmptyEntries)
@@ -145,20 +169,34 @@ let separateCommandToParts (line: string) =
     | "label" -> Label(parts[1])
     | "goto" -> GoTo(parts[1])
     | "if-goto" -> IfGoTo(parts[1])
+    | "function" -> Function(parts[1], int parts[2])
+    | "call" -> Call(parts[1], int parts[2])
+    | "return" -> Return
     | operation -> Arithmetic operation
 
-let translate (inputPath: string) =
-    let outputPath = Path.ChangeExtension(inputPath, ".asm")
-    currentFileName <- Path.GetFileName(Path.ChangeExtension(inputPath, null))
+let translateFile filePath =
+    currentFileName <- Path.GetFileName(Path.ChangeExtension(filePath, null))
+    currentFunctionName <- ""
 
-    let commands =
-        File.ReadAllLines inputPath
-        |> Array.map stripComments
-        |> Array.filter (fun line -> line <> "")
-        |> Array.map separateCommandToParts
+    File.ReadAllLines filePath
+    |> Array.map stripComments
+    |> Array.filter (fun line -> line <> "")
+    |> Array.map separateCommandToParts
+    |> Array.collect (fun command -> translateCommandToAsm command |> List.toArray)
+
+let translate (inputPath: string) =
+    let outputPath =
+        if Directory.Exists inputPath then
+            Path.Combine(inputPath, DirectoryInfo(inputPath).Name + ".asm")
+        else
+            Path.ChangeExtension(inputPath, ".asm")
 
     let assemblyLines =
-        commands
-        |> Array.collect (fun command -> translateCommandToAsm command |> List.toArray)
+        if Directory.Exists inputPath then
+            Array.append
+                (writeBootstrap |> List.toArray)
+                (Directory.GetFiles(inputPath, "*.vm") |> Array.collect translateFile)
+        else
+            [| inputPath |] |> Array.collect translateFile
 
     File.WriteAllLines(outputPath, assemblyLines)
