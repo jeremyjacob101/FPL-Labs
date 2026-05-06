@@ -10,8 +10,8 @@ let mutable currentFileName = ""
 let mutable labelCounter = 0
 let mutable currentFunctionName = ""
 
-let FRAME_REG = "R13"
-let RETURN_REG = "R14"
+let FRAME_REG = "R13" // Temporary register to hold the base address of the current function's frame during function return cleanup
+let RETURN_REG = "R14" // Temporary register to hold the return address during function return cleanup
 let GENERAL_PURPOSE_REG = "R15" // Temporary register for general use in complex operations
 let TEMP_SEGMENT_BASE = 5 // Base address for temp segment (R5-R12)
 
@@ -140,11 +140,54 @@ let writePop segment index =
     | "that" -> getPopCommands "THAT" index
     | _ -> [] // Handle other segments as needed
 
-let writeFunction functionName numLocals = []
+let writeFunction functionName numLocals =
+    currentFunctionName <- functionName
 
-let writeCall functionName numArgs = []
+    [ "(" + functionName + ")" ] // Declare function label for calls to jump to. Assume function name is already scoped to the file
+    // Initialize local variables to 0 by pushing 0 onto the stack for each local variable
+    @ List.collect (fun _ -> writePush "constant" 0) [ 1..numLocals ]
 
-let writeReturn = []
+let writeCall functionName numArgs =
+    let returnLabel = nextLabel "RETURN_"
+
+    [ "@" + getFunctionScopedLabel returnLabel; "D=A" ]
+    @ pushFromD // push return address
+    // push pointers LCL, ARG, THIS, THAT
+    @ [ "@LCL" ]
+    @ pushFromM
+    @ [ "@ARG" ]
+    @ pushFromM
+    @ [ "@THIS" ]
+    @ pushFromM
+    @ [ "@THAT" ]
+    @ pushFromM
+    @ [ "@5"; "D=A"; "@" + string numArgs; "D=D+A"; "@SP"; "D=M-D"; "@ARG"; "M=D" ] // ARG = SP-(n+5)
+    @ [ "@SP"; "D=M"; "@LCL"; "M=D" ] // LCL=SP
+    @ [ "@" + functionName; "0;JMP" ] // goto function -- assume function name is already fully resolved
+    @ writeLabel returnLabel // Declare return label for when the function returns to know where to jump back to
+
+let writeReturn =
+    let writeFromFrame target offset =
+        [ "@" + FRAME_REG
+          "D=M"
+          "@" + string offset
+          "A=D-A"
+          "D=M"
+          "@" + target
+          "M=D" ] // TARGET=*(FRAME-OFFSET)
+
+    currentFunctionName <- "" // reset function name to unscope future labels
+
+    [ "@LCL"; "D=M"; "@" + FRAME_REG; "M=D" ] // FRAME=LCL (store in temp)
+    @ writeFromFrame RETURN_REG 5 // RET=*(FRAME-5)
+    @ writePop "argument" 0 // *ARG=pop() -- put return value in arg0 spot
+    @ [ "@ARG"; "D=M+1"; "@SP"; "M=D" ] // SP=ARG+1 -- reset SP to right after the return value
+    // restore pointers
+    @ writeFromFrame "THAT" 1
+    @ writeFromFrame "THIS" 2
+    @ writeFromFrame "ARG" 3
+    @ writeFromFrame "LCL" 4
+    @ [ "@" + RETURN_REG; "A=M"; "0;JMP" ] // goto RET
 
 let writeBootstrap = [ "@256"; "D=A"; "@SP"; "M=D" ] @ writeCall "Sys.init" 0
 
