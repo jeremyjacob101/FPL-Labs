@@ -1,0 +1,110 @@
+class Display {
+    function void drawGrid() {
+        var int row, col;
+
+        do Screen.setColor(true);
+
+        let row = 0;
+        while (row < 6) {
+            let col = 0;
+
+            while (col < 5) {
+                do Display.drawCell(row, col);
+                let col = col + 1;
+            }
+
+            let row = row + 1;
+        }
+
+        return;
+    }
+
+    function void drawCell(int row, int col) {
+        var int x, y, size;
+
+        let x = Display.getX(col);
+        let y = Display.getY(row);
+        let size = 26;
+
+        do Screen.setColor(true);
+
+        do Screen.drawLine(x, y, x + size, y);
+        do Screen.drawLine(x, y, x, y + size);
+        do Screen.drawLine(x + size, y, x + size, y + size);
+        do Screen.drawLine(x, y + size, x + size, y + size);
+
+        return;
+    }
+
+    function void drawLetter(int row, int col, char letter) {
+        var int x, y, size;
+        var int textRow, textCol;
+
+        let x = Display.getX(col);
+        let y = Display.getY(row);
+        let size = 26;
+
+        let textCol = Math.divide(x + Math.divide(size - 8, 2) + 4, 8);
+        let textRow = Math.divide(y + Math.divide(size - 11, 2) + 5, 11);
+
+        do Display.clearCell(row, col);
+
+        do Output.moveCursor(textRow, textCol);
+        do Output.printChar(letter);
+
+        return;
+    }
+
+    function void clearCell(int row, int col) {
+        var int x, y, size;
+
+        let x = Display.getX(col);
+        let y = Display.getY(row);
+        let size = 26;
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x + 2, y + 2, x + size - 2, y + size - 2);
+
+        do Screen.setColor(true);
+        do Display.drawCell(row, col);
+
+        return;
+    }
+
+    function void drawCursor(int row, int col) {
+        var int x, y, size;
+
+        let x = Display.getX(col);
+        let y = Display.getY(row);
+        let size = 26;
+
+        do Screen.setColor(true);
+        do Screen.drawRectangle(x + 7, y + size - 5, x + size - 7, y + size - 4);
+
+        return;
+    }
+
+    function void clearCursor(int row, int col) {
+        var int x, y, size;
+
+        let x = Display.getX(col);
+        let y = Display.getY(row);
+        let size = 26;
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x + 7, y + size - 5, x + size - 7, y + size - 4);
+
+        do Screen.setColor(true);
+        do Display.drawCell(row, col);
+
+        return;
+    }
+
+    function int getX(int col) {
+        return 150 + (col * 33);
+    }
+
+    function int getY(int row) {
+        return 25 + (row * 33);
+    }
+}

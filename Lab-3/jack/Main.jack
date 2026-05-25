@@ -1,6 +1,10 @@
 class Main {
     function void main() {
-        do Output.printString("Hello Jack");
+        do Screen.clearScreen();
+
+        do Display.drawGrid();
+        do Input.run();
+
         return;
     }
 }

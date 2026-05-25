@@ -1,0 +1,96 @@
+class Input {
+    function void run() {
+        var int row, col;
+        var char key;
+        var boolean cursorOn;
+        var int blinkCount;
+
+        let row = 0;
+        let col = 0;
+        let cursorOn = false;
+        let blinkCount = 0;
+
+        do Display.drawCursor(row, col);
+        let cursorOn = true;
+
+        while (row < 6) {
+            let key = Keyboard.keyPressed();
+
+            if (~(key = 0)) {
+                if (cursorOn) {
+                    do Display.clearCursor(row, col);
+                    let cursorOn = false;
+                }
+
+                if ((key > 96) & (key < 123)) {
+                    let key = key - 32;
+                }
+
+                if ((key > 64) & (key < 91)) {
+                    if (col < 5) {
+                        do Display.drawLetter(row, col, key);
+                        let col = col + 1;
+                    }
+                }
+
+                if ((key = 129) | (key = 139)) {
+                    if (col > 0) {
+                        let col = col - 1;
+                        do Display.clearCell(row, col);
+                    }
+                }
+
+                if (key = 128) {
+                    if (col = 5) {
+                        let row = row + 1;
+                        let col = 0;
+                    }
+                }
+
+                do Input.waitForKeyRelease();
+
+                if (row < 6) {
+                    if (col < 5) {
+                        do Display.drawCursor(row, col);
+                        let cursorOn = true;
+                    }
+                }
+
+                let blinkCount = 0;
+            }
+
+            if (key = 0) {
+                if (col < 5) {
+                    let blinkCount = blinkCount + 1;
+
+                    if (blinkCount = 8) {
+                        if (cursorOn) {
+                            do Display.clearCursor(row, col);
+                            let cursorOn = false;
+                        }
+                        else {
+                            do Display.drawCursor(row, col);
+                            let cursorOn = true;
+                        }
+
+                        let blinkCount = 0;
+                    }
+                }
+
+                do Sys.wait(50);
+            }
+        }
+
+        while (true) {
+        }
+
+        return;
+    }
+
+    function void waitForKeyRelease() {
+        while (~(Keyboard.keyPressed() = 0)) {
+        }
+
+        return;
+    }
+}
