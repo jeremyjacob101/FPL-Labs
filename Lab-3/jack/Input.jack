@@ -1,14 +1,20 @@
 class Input {
     function void run() {
+        let target = "FJORD";
+
         var int row, col;
         var char key;
         var boolean cursorOn;
         var int blinkCount;
+        var Array letters;
+        var boolean rowIsCorrect;
 
         let row = 0;
         let col = 0;
         let cursorOn = false;
         let blinkCount = 0;
+        let letters = Array.new(5);
+        let rowIsCorrect = false;
 
         do Display.drawCursor(row, col);
         let cursorOn = true;
@@ -29,6 +35,7 @@ class Input {
                 if ((key > 64) & (key < 91)) {
                     if (col < 5) {
                         do Display.drawLetter(row, col, key);
+                        let letters[col] = key;
                         let col = col + 1;
                     }
                 }
@@ -36,12 +43,15 @@ class Input {
                 if ((key = 129) | (key = 139)) {
                     if (col > 0) {
                         let col = col - 1;
+                        let letters[col] = 0;
                         do Display.clearCell(row, col);
                     }
                 }
 
                 if (key = 128) {
                     if (col = 5) {
+                        let rowIsCorrect = Word.isRowCorrect(letters);
+
                         let row = row + 1;
                         let col = 0;
                     }
@@ -92,5 +102,26 @@ class Input {
         }
 
         return;
+    }
+
+    function boolean isRowCorrect(Array letters) {
+        var String target;
+        var int i;
+        var boolean correct;
+
+        let i = 0;
+        let correct = true;
+
+        while (i < 5) {
+            if (~(letters[i] = target.charAt(i))) {
+                let correct = false;
+            }
+
+            let i = i + 1;
+        }
+
+        do target.dispose();
+
+        return correct;
     }
 }
