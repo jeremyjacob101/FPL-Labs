@@ -1,13 +1,14 @@
 class Input {
     function void run() {
-        let target = "FJORD";
-
         var int row, col;
         var char key;
         var boolean cursorOn;
         var int blinkCount;
         var Array letters;
         var boolean rowIsCorrect;
+        var String target;
+
+        let target = "FJORD";
 
         let row = 0;
         let col = 0;
@@ -50,7 +51,7 @@ class Input {
 
                 if (key = 128) {
                     if (col = 5) {
-                        let rowIsCorrect = Word.isRowCorrect(letters);
+                        let rowIsCorrect = Input.isRowCorrect(letters, target);
 
                         let row = row + 1;
                         let col = 0;
@@ -91,6 +92,9 @@ class Input {
             }
         }
 
+        do letters.dispose();
+        do target.dispose();
+
         while (true) {
         }
 
@@ -104,8 +108,7 @@ class Input {
         return;
     }
 
-    function boolean isRowCorrect(Array letters) {
-        var String target;
+    function boolean isRowCorrect(Array letters, String target) {
         var int i;
         var boolean correct;
 
@@ -119,8 +122,6 @@ class Input {
 
             let i = i + 1;
         }
-
-        do target.dispose();
 
         return correct;
     }
