@@ -100,6 +100,21 @@ class Display {
         return;
     }
 
+    function void drawX(int row, int col) {
+        var int x, y, size;
+
+        let x = Display.getX(col);
+        let y = Display.getY(row);
+        let size = 26;
+
+        do Screen.setColor(true);
+
+        do Screen.drawLine(x + 4, y + 4, x + size - 4, y + size - 4);
+        do Screen.drawLine(x + size - 4, y + 4, x + 4, y + size - 4);
+
+        return;
+    }
+
     function int getX(int col) {
         return 150 + (col * 33);
     }
