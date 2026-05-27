@@ -35,11 +35,11 @@ class Input {
                     let cursorOn = false;
                 }
 
-                if ((key > 96) & (key < 123)) {
+                if ((key > 96) & (key < 123)) { // lowercase letter, convert to upper
                     let key = key - 32;
                 }
 
-                if ((key > 64) & (key < 91)) {
+                if ((key > 64) & (key < 91)) { // uppercase letter
                     if (col < 5) {
                         do Display.drawLetter(row, col, key);
                         let letters[col] = key;
@@ -47,7 +47,7 @@ class Input {
                     }
                 }
 
-                if ((key = 129) | (key = 139)) {
+                if ((key = 129) | (key = 139)) { // backspace, delete
                     let deleteCol = Input.prevEditableCol(lockedLetters, col - 1);
 
                     if (~(deleteCol = -1)) {
@@ -57,7 +57,7 @@ class Input {
                     }
                 }
 
-                if (key = 128) {
+                if (key = 128) { // enter
                     if (Input.isRowFull(letters)) {
                         let rowIsCorrect = Input.isRowCorrect(letters, target);
 

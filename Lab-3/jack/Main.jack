@@ -1,5 +1,6 @@
 class Main {
     function void main() {
+        do Display.init();
         do Screen.clearScreen();
 
         do Display.drawGrid();
