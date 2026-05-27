@@ -4,8 +4,8 @@ class Words {
 
     function void init() {
         // comment out one line as appropriate
-        // do Words.init_DEBUG();
-        do Words.init_FULL();
+        do Words.init_DEBUG();
+        // do Words.init_FULL();
         return;
     }
 
@@ -81,6 +81,8 @@ class Words {
         return;
     }
 
+/*
+    // comment this function out when using the short one to speed up compilation
     function void init_FULL() {
         // full list of words
         // generated using make_words.py
@@ -2407,4 +2409,5 @@ class Words {
 
         return;
     }
+*/
 }

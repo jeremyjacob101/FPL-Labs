@@ -104,8 +104,7 @@ class Input {
             }
         }
 
-        while (true) {
-        }
+        do Sys.halt();
 
         return;
     }
