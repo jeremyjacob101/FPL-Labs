@@ -1,0 +1,124 @@
+/** A guess (row) */
+class Guess {
+    /** correct (target) word, global */
+    static String target;
+    /** current guess */
+    field String guess;
+
+    function void pickTarget() {
+        let target = "FJORD";
+        return;
+    }
+
+    constructor Guess new() {
+        let guess = String.new(5);
+        return this;
+    }
+
+    method void dispose() {
+        do guess.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /* methods to modify the guess */
+
+    method void addLetter(char letter) {
+        do guess.appendChar(letter);
+        return;
+    }
+
+    method void deleteLetter() {
+        do guess.eraseLastChar();
+        return;
+    }
+
+    /* methods to check the guess */
+
+    method boolean isFull() {
+        return guess.length() = 5;
+    }
+
+    method boolean isCorrect() {
+        var int i;
+
+        if (~isFull()) {return false;}
+
+        let i = 0;
+        while (i < 5) {
+            if (~(guess.charAt(i) = target.charAt(i))) {return false;}
+            let i = i + 1;
+        }
+        return true;
+    }
+
+    /**
+      * Return an array of five elements, where each represents the correctness of the letter at that index.
+      * 0 = wrong (gray), 1 = in the word but wrong place (yellow), 2 = right letter right place (green)
+      */
+    method Array check() {
+        var Array result, targetUsed;
+        var int i;
+        var int matchIndex;
+
+        let result = Array.new(5);
+        if (isCorrect()) {
+            do Utils.clearArray(result, 5, 2);
+            return result;
+        }
+        do Utils.clearArray(result, 5, 0);
+
+        // track which letters of the target were already used in the guess
+        let targetUsed = Array.new(5);
+        do Utils.clearArray(targetUsed, 5, false);
+
+        // first mark green letters
+        let i = 0;
+        while (i < 5) {
+            if (guess.charAt(i) = target.charAt(i)) {
+                let result[i] = 2;
+                let targetUsed[i] = true;
+            }
+            let i = i + 1;
+        }
+
+        // then yellow
+        let i = 0;
+        while (i < 5) {
+            if (result[i] = 0) { // if the letter isn't already green
+                // find the index in the target word where the letter appears, if any
+                let matchIndex = findUnusedTargetMatch(guess.charAt(i), targetUsed);
+                if (matchIndex > -1) {
+                    let result[i] = 1;
+                    let targetUsed[matchIndex] = true;
+                }
+                // else leave result[i]=0
+            }
+            let i = i + 1;
+        }
+
+        do targetUsed.dispose();
+
+        return result;
+    }
+
+    method int findUnusedTargetMatch(char letter, Array targetUsed) {
+        var int i;
+
+        let i = 0;
+
+        while (i < 5) {
+            if ((target.charAt(i) = letter) & (~(targetUsed[i]))) {
+                return i;
+            }
+
+            let i = i + 1;
+        }
+
+        return -1;
+    }
+
+    method char charAt(int i) {
+        return guess.charAt(i);
+    }
+}

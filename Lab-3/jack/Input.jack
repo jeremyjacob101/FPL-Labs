@@ -5,23 +5,15 @@ class Input {
         var char key;
         var boolean cursorOn;
         var int blinkCount;
-        var Array letters;
-        var Array lockedLetters;
-        var boolean rowIsCorrect;
-        var String target;
-
-        let target = "FJORD";
+        var Guess guess;
 
         let row = 0;
         let col = 0;
         let cursorOn = false;
         let blinkCount = 0;
-        let letters = Array.new(5);
-        let lockedLetters = Array.new(5);
-        let rowIsCorrect = false;
 
-        do Input.clearArray(letters);
-        do Input.clearArray(lockedLetters);
+        do Guess.pickTarget();
+        let guess = Guess.new();
 
         do Display.drawCursor(row, col);
         let cursorOn = true;
@@ -43,37 +35,37 @@ class Input {
                     if (col < 5) {
                         do Display.resetCell(row, col);
                         do Display.drawLetter(row, col, key);
-                        let letters[col] = key;
-                        let col = Input.nextEditableCol(lockedLetters, col + 1);
+                        do guess.addLetter(key);
+                        let col = col + 1;
                     }
                 }
 
                 if ((key = 129) | (key = 139)) { // backspace, delete
-                    let deleteCol = Input.prevEditableCol(lockedLetters, col - 1);
+                    let deleteCol = col - 1;
 
                     if (~(deleteCol = -1)) {
                         let col = deleteCol;
-                        let letters[col] = 0;
+                        do guess.deleteLetter();
                         do Display.resetCell(row, col);
                     }
                 }
 
                 if (key = 128) { // enter
-                    if (Input.isRowFull(letters)) {
-                        let rowIsCorrect = Input.isRowCorrect(letters, target);
+                    if (guess.isFull()) {
+                        do Input.checkRow(row, guess);
 
-                        do Input.checkRow(row, letters, target, lockedLetters);
-
-                        if (rowIsCorrect) {
+                        if (guess.isCorrect()) {
                             let row = 6;
                         }
                         else {
                             let row = row + 1;
 
+                            do guess.dispose();
+
                             if (row < 6) {
-                                do Input.copyLockedLetters(letters, lockedLetters);
-                                do Input.drawLockedLetters(row, lockedLetters);
-                                let col = Input.nextEditableCol(lockedLetters, 0);
+                                let col = 0;
+
+                                let guess = Guess.new();
                             }
                         }
                     }
@@ -113,10 +105,6 @@ class Input {
             }
         }
 
-        do letters.dispose();
-        do lockedLetters.dispose();
-        do target.dispose();
-
         while (true) {
         }
 
@@ -130,168 +118,22 @@ class Input {
         return;
     }
 
-    function void checkRow(int row, Array letters, String target, Array lockedLetters) {
+    function void checkRow(int row, Guess guess) {
         var int i;
-        var int matchIndex;
-        var Array targetUsed;
+        var Array result;
 
-        let targetUsed = Array.new(5);
-        do Input.clearArray(targetUsed);
+        let result = guess.check();
 
         let i = 0;
         while (i < 5) {
-            if (letters[i] = target.charAt(i)) {
-                let targetUsed[i] = true;
-                let lockedLetters[i] = letters[i];
-                do Display.drawResultLetter(row, i, letters[i], 2);
-            }
+            do Display.drawResultLetter(row, i, guess.charAt(i), result[i]);
 
             let i = i + 1;
         }
 
-        let i = 0;
-        while (i < 5) {
-            if (~(letters[i] = target.charAt(i))) {
-                let matchIndex = Input.findUnusedTargetMatch(letters[i], target, targetUsed);
-
-                if (matchIndex = -1) {
-                    do Display.drawResultLetter(row, i, letters[i], 0);
-                }
-                else {
-                    let targetUsed[matchIndex] = true;
-                    do Display.drawResultLetter(row, i, letters[i], 1);
-                }
-            }
-
-            let i = i + 1;
-        }
-
-        do targetUsed.dispose();
+        // allocated as a result of guess.check()
+        do result.dispose();
 
         return;
-    }
-
-    function int findUnusedTargetMatch(char letter, String target, Array targetUsed) {
-        var int i;
-
-        let i = 0;
-
-        while (i < 5) {
-            if ((target.charAt(i) = letter) & (~(targetUsed[i]))) {
-                return i;
-            }
-
-            let i = i + 1;
-        }
-
-        return -1;
-    }
-
-    function boolean isRowCorrect(Array letters, String target) {
-        var int i;
-        var boolean correct;
-
-        let i = 0;
-        let correct = true;
-
-        while (i < 5) {
-            if (~(letters[i] = target.charAt(i))) {
-                let correct = false;
-            }
-
-            let i = i + 1;
-        }
-
-        return correct;
-    }
-
-    function boolean isRowFull(Array letters) {
-        var int i;
-
-        let i = 0;
-
-        while (i < 5) {
-            if (letters[i] = 0) {
-                return false;
-            }
-
-            let i = i + 1;
-        }
-
-        return true;
-    }
-
-    function void clearArray(Array array) {
-        var int i;
-
-        let i = 0;
-
-        while (i < 5) {
-            let array[i] = 0;
-            let i = i + 1;
-        }
-
-        return;
-    }
-
-    function void copyLockedLetters(Array letters, Array lockedLetters) {
-        var int i;
-
-        let i = 0;
-
-        while (i < 5) {
-            let letters[i] = lockedLetters[i];
-            let i = i + 1;
-        }
-
-        return;
-    }
-
-    function void drawLockedLetters(int row, Array lockedLetters) {
-        var int i;
-
-        let i = 0;
-
-        while (i < 5) {
-            if (~(lockedLetters[i] = 0)) {
-                do Display.drawLetter(row, i, lockedLetters[i]);
-            }
-
-            let i = i + 1;
-        }
-
-        return;
-    }
-
-    function int nextEditableCol(Array lockedLetters, int start) {
-        var int i;
-
-        let i = start;
-
-        while (i < 5) {
-            if (lockedLetters[i] = 0) {
-                return i;
-            }
-
-            let i = i + 1;
-        }
-
-        return 5;
-    }
-
-    function int prevEditableCol(Array lockedLetters, int start) {
-        var int i;
-
-        let i = start;
-
-        while (~(i < 0)) {
-            if (lockedLetters[i] = 0) {
-                return i;
-            }
-
-            let i = i - 1;
-        }
-
-        return -1;
     }
 }

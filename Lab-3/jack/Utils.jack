@@ -1,0 +1,16 @@
+/** utility functions */
+class Utils {
+    /** reset an array to an initial value */
+    function void clearArray(Array array, int n, int initValue) {
+        var int i;
+
+        let i = 0;
+
+        while (i < n) {
+            let array[i] = initValue;
+            let i = i + 1;
+        }
+
+        return;
+    }
+}
