@@ -41,6 +41,7 @@ class Input {
 
                 if ((key > 64) & (key < 91)) { // uppercase letter
                     if (col < 5) {
+                        do Display.resetCell(row, col);
                         do Display.drawLetter(row, col, key);
                         let letters[col] = key;
                         let col = Input.nextEditableCol(lockedLetters, col + 1);
@@ -53,7 +54,7 @@ class Input {
                     if (~(deleteCol = -1)) {
                         let col = deleteCol;
                         let letters[col] = 0;
-                        do Display.clearCell(row, col);
+                        do Display.resetCell(row, col);
                     }
                 }
 
@@ -142,6 +143,7 @@ class Input {
             if (letters[i] = target.charAt(i)) {
                 let targetUsed[i] = true;
                 let lockedLetters[i] = letters[i];
+                do Display.drawResultLetter(row, i, letters[i], 2);
             }
 
             let i = i + 1;
@@ -153,10 +155,11 @@ class Input {
                 let matchIndex = Input.findUnusedTargetMatch(letters[i], target, targetUsed);
 
                 if (matchIndex = -1) {
-                    do Display.drawX(row, i);
+                    do Display.drawResultLetter(row, i, letters[i], 0);
                 }
                 else {
                     let targetUsed[matchIndex] = true;
+                    do Display.drawResultLetter(row, i, letters[i], 1);
                 }
             }
 
