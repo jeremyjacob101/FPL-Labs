@@ -164,4 +164,16 @@ class Display {
     function int getY(int row) {
         return yStart + (row * (size + cellSpacing));
     }
+
+    function void showAnswer(String word) {
+        do Output.moveCursor(0, 29);
+        do Output.printString(word);
+        return;
+    }
+
+    function void showLettersAvailable(String lettersAvailable) {
+        do Output.moveCursor(22, 17);
+        do Output.printString(lettersAvailable);
+        return;
+    }
 }

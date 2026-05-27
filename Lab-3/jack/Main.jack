@@ -19,7 +19,7 @@ class Main {
 
         // DEBUG: show word
         // do Output.moveCursor(0, 0);
-        // do Output.printString(Guess.DEBUG_getTarget());
+        // do Output.printString(Guess.getTarget());
         // do Output.println();
         // do Output.printInt(randSeed);
 

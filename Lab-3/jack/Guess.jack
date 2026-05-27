@@ -12,7 +12,7 @@ class Guess {
         return;
     }
 
-    function String DEBUG_getTarget() {
+    function String getTarget() {
         return target;
     }
 
