@@ -55,24 +55,33 @@ class Input {
 
                 if (key = 128) { // enter
                     if (guess.isFull()) {
-                        do Input.checkRow(row, guess, lettersAvailable);
+                        if (guess.isValid()) {
+                            do Input.checkRow(row, guess, lettersAvailable);
 
-                        if (guess.isCorrect()) {
-                            let row = 6;
-                        }
-                        else {
-                            let row = row + 1;
-
-                            do guess.dispose();
-
-                            if (row < 6) {
-                                let col = 0;
-
-                                let guess = Guess.new();
+                            if (guess.isCorrect()) {
+                                let row = 6;
                             }
                             else {
-                                do Display.showAnswer(Guess.getTarget());
+                                let row = row + 1;
+
+                                do guess.dispose();
+
+                                if (row < 6) {
+                                    let col = 0;
+
+                                    let guess = Guess.new();
+                                }
+                                else {
+                                    do Display.showAnswer(Guess.getTarget());
+                                }
                             }
+                        }
+                        else { // invalid guess
+                            do guess.dispose();
+                            let col = 0;
+                            let guess = Guess.new();
+                            do Display.showInvalidGuess(row);
+                            // this will show the warning, wait, and clear the row
                         }
                     }
                 }

@@ -58,6 +58,10 @@ class Guess {
         return true;
     }
 
+    method boolean isValid() {
+        return Words.validateWord(guess);
+    }
+
     /**
       * Return an array of five elements, where each represents the correctness of the letter at that index.
       * 0 = wrong (gray), 1 = in the word but wrong place (yellow), 2 = right letter right place (green)

@@ -4,8 +4,8 @@ class Words {
 
     function void init() {
         // comment out one line as appropriate
-        do Words.init_DEBUG();
-        // do Words.init_FULL();
+        // do Words.init_DEBUG();
+        do Words.init_FULL();
         return;
     }
 
@@ -45,9 +45,56 @@ class Words {
         return result;
     }
 
+    function boolean validateWord(String word) {
+        var int w_hi, w_lo; // encoded word (from input)
+        var int s_hi, s_lo; // encoded word (current search result)
+        var int l, r, m; // binary search vars
+
+        // uncomment to automatically allow all guesses:
+        // return true;
+
+        let w_hi = Words.encodeWord1(word);
+        let w_lo = Words.encodeWord2(word);
+
+        // perform binary search
+        let l = 0;
+        let r = totalCount;
+        while (l < (r+1)) {
+            let m = l + ((r - l) / 2);
+            let s_hi = words[m * 2];
+            let s_lo = words[m * 2 + 1];
+            if ((s_hi < w_hi) | ((s_hi = w_hi) & (s_lo < w_lo))) {
+                let l = m + 1;
+            }
+            else {
+                if ((s_hi > w_hi) | ((s_hi = w_hi) & (s_lo > w_lo))) {
+                    let r = m - 1;
+                } else { // must match totally
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /** convert a letter index (0-25) to a char */
     function char getLetter(int ord) {
         return 65 + ord;
+    }
+
+    /** convert a char to its letter index (0-25) */
+    function int getOrd(char letter) {
+        return letter - 65;
+    }
+
+    /** encode a word into a pair of base26-encoded numbers (first half - 2 letters) */
+    function int encodeWord1(String word) {
+        return 26 * Words.getOrd(word.charAt(0)) + Words.getOrd(word.charAt(1));
+    }
+
+    /** encode a word into a pair of base26-encoded numbers (second half - 3 letters) */
+    function int encodeWord2(String word) {
+        return (676 * Words.getOrd(word.charAt(2))) + (26 * Words.getOrd(word.charAt(3))) + Words.getOrd(word.charAt(4));
     }
 
     function void init_DEBUG() {
@@ -81,12 +128,12 @@ class Words {
         return;
     }
 
-/*
+
     // comment this function out when using the short one to speed up compilation
     function void init_FULL() {
         // full list of words
         // generated using make_words.py
-        let totalCount = 20;
+        let totalCount = 2315;
         let words = Array.new(totalCount * 2);
 
         // each word is encoded as a pair of 16-bit integers, representing the first2 and last3 characters of the word in base26
@@ -2409,5 +2456,5 @@ class Words {
 
         return;
     }
-*/
+
 }

@@ -176,4 +176,22 @@ class Display {
         do Output.printString(lettersAvailable);
         return;
     }
+
+    function void showInvalidGuess(int row) {
+        var int col;
+
+        do Output.moveCursor(0, 25);
+        do Output.printString("Invalid word!");
+        do Sys.wait(500);
+        do Output.moveCursor(0, 25);
+        do Output.printString("             ");
+
+        let col = 0;
+        while (col < 5) {
+            do Display.resetCell(row, col);
+            let col = col + 1;
+        }
+
+        return;
+    }
 }
