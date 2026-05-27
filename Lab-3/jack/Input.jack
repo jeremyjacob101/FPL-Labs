@@ -12,7 +12,6 @@ class Input {
         let cursorOn = false;
         let blinkCount = 0;
 
-        do Guess.pickTarget();
         let guess = Guess.new();
 
         do Display.drawCursor(row, col);
@@ -116,6 +115,18 @@ class Input {
         }
 
         return;
+    }
+
+    function int waitForKeyPress() {
+        var int ticks;
+        while (Keyboard.keyPressed() = 0) {
+            let ticks = ticks + 1;
+        }
+        while (~(Keyboard.keyPressed() = 0)) {
+            let ticks = ticks + 1;
+        }
+
+        return ticks;
     }
 
     function void checkRow(int row, Guess guess) {

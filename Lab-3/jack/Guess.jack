@@ -6,8 +6,14 @@ class Guess {
     field String guess;
 
     function void pickTarget() {
-        let target = "FJORD";
+        var int wordIndex;
+        let wordIndex = Random.randRange(Words.wordCount());
+        let target = Words.getWord(wordIndex);
         return;
+    }
+
+    function String DEBUG_getTarget() {
+        return target;
     }
 
     constructor Guess new() {
