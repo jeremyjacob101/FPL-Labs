@@ -5,7 +5,7 @@
     <RootNamespace>FPL___Codebase</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup><Compile Include="Lab-4/Definitions.fs" />
     <Compile Include="Lab-2/VMtranslator.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
