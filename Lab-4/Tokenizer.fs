@@ -41,10 +41,20 @@ let tokenize (text: string) : Token list =
             let c = text[i]
 
             if isSymbol c then // Symbol
-                tokens.Add({ Kind = Keyword; Value = "" })
+                tokens.Add({ Kind = Symbol; Value = string c })
 
             elif isDigit c then // Digit
-                tokens.Add({ Kind = Keyword; Value = "" })
+                let startIndex = i
+
+                while i < text.Length && isDigit text[i] do
+                    i <- i + 1
+
+                let value = text.Substring(startIndex, i - startIndex)
+
+                if int value > MaxIntConstant then
+                    failwith "integerConst too large"
+
+                tokens.Add({ Kind = Keyword; Value = value })
 
             elif c = '"' then // String
                 tokens.Add({ Kind = Keyword; Value = "" })
