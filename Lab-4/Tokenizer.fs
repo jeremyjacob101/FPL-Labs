@@ -5,10 +5,6 @@ open Definitions
 
 type Token = { Kind: TokenType; Value: string }
 
-let isWhitespace = false
-let isLineComment = false
-let isBlockComment = false
-
 // Jack Lexicon
 let isSymbol (c: char) = List.contains c symbolChars
 let isDigit (c: char) = Char.IsDigit c
@@ -17,16 +13,25 @@ let isIdentifierPart (c: char) = Char.IsLetterOrDigit c || c = '_'
 
 let skipWhitespaceAndComments (text: string) (startIndex: int) =
     let mutable i = startIndex
+    let mutable skipping = true
 
-    while i < text.Length do
-        if isWhitespace then
-            printfn "iterate"
+    while i < text.Length && skipping do
+        if Char.IsWhiteSpace text[i] then // Whitespace
+            i <- i + 1
 
-        elif isLineComment then
-            printfn "iterate"
+        elif text[i] = '/' && i + 1 < text.Length && text[i + 1] = '/' then // Line Comment
+            i <- i + 2
+            while i < text.Length && text[i] <> '\n' do
+                i <- i + 1
 
-        elif isBlockComment then
-            printfn "iterate"
+        elif text[i] = '/' && i + 1 < text.Length && text[i + 1] = '*' then // Block Comment
+            i <- i + 2
+            while i + 1 < text.Length && not (text[i] = '*' && text[i + 1] = '/') do
+                i <- i + 1
+            i <- i + 2
+
+        else
+            skipping <- false
 
     i
 
