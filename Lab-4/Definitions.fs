@@ -53,3 +53,10 @@ let symbolChars =
       '>'
       '='
       '~' ]
+
+type Token = { Kind: TokenType; Value: string }
+
+type Node =
+    { Kind: string
+      Children: Node list | null
+      Token: Token option }

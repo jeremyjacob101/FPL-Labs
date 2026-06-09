@@ -3,6 +3,8 @@
 
 open System.IO
 open Tokenizer
+open Definitions
+open XMLWriter
 
 let getJackFiles path =
     if File.Exists path then
@@ -21,9 +23,27 @@ let main argv =
         argv |> Array.toList |> List.collect getJackFiles |> List.map tokenizeFile
 
     for path, tokens in tokenizedFiles do
-        printfn "\n%s\n" path
+        let outputPath =
+            Path.GetDirectoryName path
+            + "/"
+            + Path.GetFileNameWithoutExtension path
+            + "TOut"
+            + ".xml"
 
-        for token in tokens do
-            printfn "%A %s" token.Kind token.Value
+        let nodes =
+            tokens
+            |> List.map (fun token ->
+                { Kind = "token"
+                  Children = null
+                  Token = Some token })
+
+        let xmlContent =
+            writeNode
+                { Kind = "tokens"
+                  Children = nodes
+                  Token = None }
+                0
+
+        File.WriteAllText(outputPath, xmlContent)
 
     0
