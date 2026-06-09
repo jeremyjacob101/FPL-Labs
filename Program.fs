@@ -2,8 +2,9 @@
 // Jeremy Jacob | TZ 345570451
 
 open System.IO
-open Tokenizer
 open Definitions
+open Tokenizer
+open Parser
 open XMLWriter
 
 let getJackFiles path =
@@ -27,22 +28,12 @@ let main argv =
             Path.GetDirectoryName path
             + "/"
             + Path.GetFileNameWithoutExtension path
-            + "TOut"
+            + "Out"
             + ".xml"
 
-        let nodes =
-            tokens
-            |> List.map (fun token ->
-                { Kind = "token"
-                  Children = null
-                  Token = Some token })
+        let tree = parseProgram tokens
 
-        let xmlContent =
-            writeNode
-                { Kind = "tokens"
-                  Children = nodes
-                  Token = None }
-                0
+        let xmlContent = writeNode tree 0
 
         File.WriteAllText(outputPath, xmlContent)
 

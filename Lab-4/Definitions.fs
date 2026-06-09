@@ -54,9 +54,10 @@ let symbolChars =
       '='
       '~' ]
 
-type Token = { Kind: TokenType; Value: string }
+// Declare Token as its own type, but also as a case of Node - it seems to work
+
+type Token = TokenType * string
 
 type Node =
-    { Kind: string
-      Children: Node list | null
-      Token: Token option }
+    | Token of TokenType * string
+    | Node of string * Node list

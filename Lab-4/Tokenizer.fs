@@ -48,7 +48,7 @@ let tokenize (text: string) : Token list =
             let c = text[i]
 
             if isSymbol c then // Symbol
-                tokens.Add({ Kind = Symbol; Value = string c })
+                tokens.Add((Symbol, string c))
                 i <- i + 1
 
             elif isDigit c then // Digit
@@ -62,7 +62,7 @@ let tokenize (text: string) : Token list =
                 if int value > MaxIntConstant then
                     failwith "integerConst too large"
 
-                tokens.Add({ Kind = IntConst; Value = value })
+                tokens.Add((IntConst, value))
 
             elif c = '"' then // String
                 let startIndex = i
@@ -75,7 +75,7 @@ let tokenize (text: string) : Token list =
                 i <- i + 1
 
                 let value = text.Substring(startIndex + 1, i - startIndex - 2)
-                tokens.Add({ Kind = StringConst; Value = value })
+                tokens.Add((StringConst, value))
 
             elif isIdentifierStart c then // Identifier/Keyword
                 let startIndex = i
@@ -90,6 +90,6 @@ let tokenize (text: string) : Token list =
                 if List.contains value keywordStrings then
                     kind <- Keyword
 
-                tokens.Add({ Kind = kind; Value = value })
+                tokens.Add((kind, value))
 
     List.ofSeq tokens

@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="Lab-4/Definitions.fs" />
     <Compile Include="Lab-4/Tokenizer.fs" />
+    <Compile Include="Lab-4/Parser.fs" />
     <Compile Include="Lab-4/XMLWriter.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
