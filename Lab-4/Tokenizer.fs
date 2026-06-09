@@ -85,10 +85,11 @@ let tokenize (text: string) : Token list =
 
                 let value = text.Substring(startIndex, i - startIndex)
 
-                let mutable kind = Identifier
-
-                if List.contains value keywordStrings then
-                    kind <- Keyword
+                let kind =
+                    if List.contains value keywordStrings then
+                        Keyword
+                    else
+                        Identifier
 
                 tokens.Add((kind, value))
 
