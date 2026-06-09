@@ -31,7 +31,7 @@ let main argv =
             + "Out"
             + ".xml"
 
-        let tree = parseProgram tokens
+        let tree = parseProgram (Path.GetFileNameWithoutExtension path) tokens
 
         let xmlContent = writeNode tree 0
 

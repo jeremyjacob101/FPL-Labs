@@ -14,4 +14,14 @@
     <identifier> direction </identifier>
     <symbol> ; </symbol>
   </classVarDec>
+  <subroutineDec>
+    <keyword> constructor </keyword>
+    <identifier> SquareGame </identifier>
+    <identifier> new </identifier>
+    <symbol> ( </symbol>
+    <symbol> ) </symbol>
+    <subroutineBody>
+      <symbol> { </symbol>
+    </subroutineBody>
+  </subroutineDec>
 </class>
