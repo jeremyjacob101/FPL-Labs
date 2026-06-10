@@ -4,6 +4,8 @@ open Definitions
 
 let indent (level: int) = String.replicate (level * 2) " "
 
+let isNotEmptyString (s: string) = s.Trim() <> ""
+
 let rec writeNode (node: Node) (level: int) =
     let indentStr = indent level
 
@@ -16,4 +18,5 @@ let rec writeNode (node: Node) (level: int) =
           |> List.map (fun child -> writeNode child (level + 1))
           |> String.concat "\n"
           sprintf "%s</%s>" indentStr kind ]
+        |> List.filter isNotEmptyString
         |> String.concat "\n"

@@ -63,9 +63,116 @@ let parseStar fn =
 
 let parseIdentifier () = expect Identifier []
 
+//#region expression parsing functions
+
+// TODO: implement
+let parseOp = null
+let parseUnaryOp = null
+let parseKeywordConstant = null
+
+// use `let rec` and `and` to allow mutually recursive parsing functions,
+//which we will need for expressions since they can be nested and can also contain subroutine calls
+// which can contain expressions as arguments, while still allowing access to the functions in the outer scope, like parseSubroutineCall.
+let rec parseOptionalExpression () : Node option =
+    // TODO: replace this with actual calls to parseTerm etc
+    match currentToken () with
+    | (Identifier, _) -> Some [ parseIdentifier () ]
+    | (Keyword, "this") -> Some [ expect Keyword [ "this" ] ]
+    | _ -> None
+    // TEMP: automatically wrap in a <term> and <expression>
+    |> Option.map (fun c -> (makeNode "expression" [ makeNode "term" c ]))
+
+and parseExpression () =
+    match parseOptionalExpression () with
+    | Some x -> x
+    | None -> failwithf "[%s] Expected expression but got %A" fileName (currentToken ())
+
+and parseTerm () = null // TODO: implement
+// We will need a lookahead for identifiers to distinguish between varName, varName[expression], and subroutineCall, which all start with an identifier.
+
+and parseSubroutineCall () =
+    [ parseIdentifier () ] // subroutine name or className|varName
+    @ (tryMatchToken Symbol [ "." ] (fun () -> [ parseIdentifier () ])
+       |> Option.defaultValue []) // retroactively resolve first id as class or var name, and find the subroutine name
+    @ [ expect Symbol [ "(" ]; parseExpressionList (); expect Symbol [ ")" ] ]
+
+and parseExpressionList () =
+    match currentToken () with
+    | (Symbol, ")") -> [] // empty expression list -- AFTER(expressionList) = {")"}
+    | _ ->
+        [ parseExpression () ]
+        @ parseStarFlat (fun () -> tryMatchToken Symbol [ "," ] (fun () -> [ parseExpression () ]))
+    |> makeNode "expressionList"
+
+//#endregion
+
 //#region statement parsing functions
 
-let parseStatements () = [] // TODO: fill in
+
+let rec parseStatements () =
+    // statement*
+
+    // define internal statement parsing so we can recursively call parseStatements() for nested statements in if and while
+
+    let parseLetStatement () =
+        // 'let' varName ('[' expression ']')? '=' expression ';'
+        [ expect Keyword [ "let" ]; parseIdentifier () ] // var name
+        // optional array access
+        @ (tryMatchToken Symbol [ "[" ] (fun () -> [ parseExpression (); expect Symbol [ "]" ] ])
+           |> Option.defaultValue [])
+        @ [ expect Symbol [ "=" ]; parseExpression (); expect Symbol [ ";" ] ]
+        |> makeNode "letStatement"
+
+    let parseIfStatement () =
+        // 'if' '(' expression ')' '{' statements '}' ( 'else' '{' statements '}' )?
+        [ expect Keyword [ "if" ]
+          expect Symbol [ "(" ]
+          parseExpression ()
+          expect Symbol [ ")" ]
+          expect Symbol [ "{" ]
+          parseStatements ()
+          expect Symbol [ "}" ] ]
+        // optional else clause
+        @ (tryMatchToken Keyword [ "else" ] (fun () ->
+            [ expect Symbol [ "{" ]; parseStatements (); expect Symbol [ "}" ] ])
+           |> Option.defaultValue [])
+        |> makeNode "ifStatement"
+
+    let parseWhileStatement () =
+        // 'while' '(' expression ')' '{' statements '}'
+        [ expect Keyword [ "while" ]
+          expect Symbol [ "(" ]
+          parseExpression ()
+          expect Symbol [ ")" ]
+          expect Symbol [ "{" ]
+          parseStatements ()
+          expect Symbol [ "}" ] ]
+        |> makeNode "whileStatement"
+
+    let parseDoStatement () =
+        // 'do' subroutineCall ';'
+        [ expect Keyword [ "do" ] ] @ parseSubroutineCall () @ [ expect Symbol [ ";" ] ]
+        |> makeNode "doStatement"
+
+    let parseReturnStatement () =
+        // 'return' expression? ';'
+        [ expect Keyword [ "return" ] ]
+        @ (parseOptionalExpression () |> Option.toList)
+        @ [ expect Symbol [ ";" ] ]
+        |> makeNode "returnStatement"
+
+    let parseStatement () =
+        // letStatement | ifStatement | whileStatement | doStatement | returnStatement
+        match currentToken () with
+        | (Keyword, "let") -> Some(parseLetStatement ())
+        | (Keyword, "if") -> Some(parseIfStatement ())
+        | (Keyword, "while") -> Some(parseWhileStatement ())
+        | (Keyword, "do") -> Some(parseDoStatement ())
+        | (Keyword, "return") -> Some(parseReturnStatement ())
+        | _ -> None
+
+    // statements: statement*
+    parseStar parseStatement |> makeNode "statements"
 //#endregion
 
 //#region program structure parsing functions
@@ -90,13 +197,11 @@ let parseParameterList () =
     let parseIndividualParam () = [ parseType (); parseIdentifier () ]
 
     match currentToken () with
-    | (Symbol, ")") -> None
+    | (Symbol, ")") -> []
     | _ ->
-        Some(
-            parseIndividualParam ()
-            @ parseStarFlat (fun () -> tryMatchToken Symbol [ "," ] parseIndividualParam)
-            |> makeNode "parameterList"
-        )
+        parseIndividualParam ()
+        @ parseStarFlat (fun () -> tryMatchToken Symbol [ "," ] parseIndividualParam)
+    |> makeNode "parameterList"
 
 let parseVarDec () =
     // 'var' type varName (',' varName)* ';
@@ -108,8 +213,9 @@ let parseVarDec () =
 
 let parseSubroutineBody () =
     // '{' varDec* statements '}'
-    [ expect Symbol [ "{" ] ] @ parseStar parseVarDec @ parseStatements ()
-    // @ [ expect Symbol [ "}" ] ] // TODO: enable after implementing statements parsing
+    [ expect Symbol [ "{" ] ]
+    @ parseStar parseVarDec
+    @ [ parseStatements (); expect Symbol [ "}" ] ]
     |> makeNode "subroutineBody"
 
 let parseSubroutineDec () =
@@ -120,9 +226,10 @@ let parseSubroutineDec () =
            else
                parseType ())
           parseIdentifier () // subroutine name
-          expect Symbol [ "(" ] ]
-        @ (parseParameterList () |> Option.toList)
-        @ [ expect Symbol [ ")" ]; parseSubroutineBody () ])
+          expect Symbol [ "(" ]
+          parseParameterList ()
+          expect Symbol [ ")" ]
+          parseSubroutineBody () ])
     |> Option.map (makeNode "subroutineDec")
 
 let parseClass () =
@@ -130,7 +237,7 @@ let parseClass () =
     [ expect Keyword [ "class" ]; parseIdentifier (); expect Symbol [ "{" ] ]
     @ parseStar parseClassVarDec
     @ parseStar parseSubroutineDec
-    // @ [ expect Symbol [ "}" ] ]
+    @ [ expect Symbol [ "}" ] ]
     |> makeNode "class"
 
 //#endregion
