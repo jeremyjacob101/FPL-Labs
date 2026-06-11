@@ -11,6 +11,9 @@ let mutable index = 0
 let currentToken () = tokens[index]
 let advance () = index <- index + 1
 
+//lookahead for identifiers to distinguish between varName, varName[expression], and subroutineCall, which all start with an identifier.
+let peekToken offset = tokens[index + offset]
+
 // check if the current token matches the expected kind and value (if provided), without advancing
 let matchToken (kind: TokenType) (value: string list) : bool =
     let tokenKind, tokenValue = currentToken ()
@@ -65,30 +68,57 @@ let parseIdentifier () = expect Identifier []
 
 //#region expression parsing functions
 
-// TODO: implement
-let parseOp = null
-let parseUnaryOp = null
-let parseKeywordConstant = null
+let parseOp () =
+    expect Symbol [ "+"; "-"; "*"; "/"; "&"; "|"; "<"; ">"; "=" ]
+
+let parseUnaryOp () = expect Symbol [ "-"; "~" ]
+
+let parseKeywordConstant () =
+    expect Keyword [ "true"; "false"; "null"; "this" ]
 
 // use `let rec` and `and` to allow mutually recursive parsing functions,
 //which we will need for expressions since they can be nested and can also contain subroutine calls
 // which can contain expressions as arguments, while still allowing access to the functions in the outer scope, like parseSubroutineCall.
 let rec parseOptionalExpression () : Node option =
-    // TODO: replace this with actual calls to parseTerm etc
     match currentToken () with
-    | (Identifier, _) -> Some [ parseIdentifier () ]
-    | (Keyword, "this") -> Some [ expect Keyword [ "this" ] ]
+    | (IntConst, _)
+    | (StringConst, _)
+    | (Keyword, ("true" | "false" | "null" | "this"))
+    | (Identifier, _)
+    | (Symbol, ("(" | "-" | "~")) ->
+        [ parseTerm () ]
+        @ parseStarFlat (fun () ->
+            if matchToken Symbol [ "+"; "-"; "*"; "/"; "&"; "|"; "<"; ">"; "=" ] then
+                Some [ parseOp (); parseTerm () ]
+            else
+                None)
+        |> makeNode "expression"
+        |> Some
     | _ -> None
-    // TEMP: automatically wrap in a <term> and <expression>
-    |> Option.map (fun c -> (makeNode "expression" [ makeNode "term" c ]))
 
 and parseExpression () =
     match parseOptionalExpression () with
     | Some x -> x
     | None -> failwithf "[%s] Expected expression but got %A" fileName (currentToken ())
 
-and parseTerm () = null // TODO: implement
-// We will need a lookahead for identifiers to distinguish between varName, varName[expression], and subroutineCall, which all start with an identifier.
+and parseTerm () =
+    match currentToken () with
+    | (IntConst, _) -> [ expect IntConst [] ]
+    | (StringConst, _) -> [ expect StringConst [] ]
+    | (Keyword, ("true" | "false" | "null" | "this")) -> [ parseKeywordConstant () ]
+    | (Symbol, "(") -> [ expect Symbol [ "(" ]; parseExpression (); expect Symbol [ ")" ] ]
+    | (Symbol, ("-" | "~")) -> [ parseUnaryOp (); parseTerm () ]
+    | (Identifier, _) ->
+        match peekToken 1 with
+        | (Symbol, "[") ->
+            [ parseIdentifier ()
+              expect Symbol [ "[" ]
+              parseExpression ()
+              expect Symbol [ "]" ] ]
+        | (Symbol, ("(" | ".")) -> parseSubroutineCall ()
+        | _ -> [ parseIdentifier () ]
+    | _ -> failwithf "[%s] Expected term but got %A" fileName (currentToken ())
+    |> makeNode "term"
 
 and parseSubroutineCall () =
     [ parseIdentifier () ] // subroutine name or className|varName

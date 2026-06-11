@@ -6,12 +6,19 @@ let indent (level: int) = String.replicate (level * 2) " "
 
 let isNotEmptyString (s: string) = s.Trim() <> ""
 
+let tokenTagName kind =
+    match kind with
+    | IntConst -> "integerConstant"
+    | StringConst -> "stringConstant"
+    | _ -> kind.ToString().ToLower()
+
 let rec writeNode (node: Node) (level: int) =
     let indentStr = indent level
 
     match node with
     | Token(kind, value) ->
-        sprintf "%s<%s> %s </%s>" indentStr (kind.ToString().ToLower()) value (kind.ToString().ToLower())
+        let tagName = tokenTagName kind
+        sprintf "%s<%s> %s </%s>" indentStr tagName value tagName
     | Node(kind, children) ->
         [ sprintf "%s<%s>" indentStr kind
           children
