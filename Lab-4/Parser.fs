@@ -1,6 +1,5 @@
 module Parser
 
-open Tokenizer
 open Definitions
 
 //#region Parser state and utilities
@@ -80,6 +79,7 @@ let parseKeywordConstant () =
 //which we will need for expressions since they can be nested and can also contain subroutine calls
 // which can contain expressions as arguments, while still allowing access to the functions in the outer scope, like parseSubroutineCall.
 let rec parseOptionalExpression () : Node option =
+    // term (op term)*
     match currentToken () with
     | (IntConst, _)
     | (StringConst, _)
@@ -102,6 +102,7 @@ and parseExpression () =
     | None -> failwithf "[%s] Expected expression but got %A" fileName (currentToken ())
 
 and parseTerm () =
+    // integerConstant | stringConstant | keywordConstant | varName | varName '[' expression ']' | subroutineCall | '(' expression ')' | unaryOp term
     match currentToken () with
     | (IntConst, _) -> [ expect IntConst [] ]
     | (StringConst, _) -> [ expect StringConst [] ]
@@ -121,14 +122,16 @@ and parseTerm () =
     |> makeNode "term"
 
 and parseSubroutineCall () =
+    // subroutineName '(' expressionList ')' | ( className | varName) '.' subroutineName '(' expressionList ')'
     [ parseIdentifier () ] // subroutine name or className|varName
     @ (tryMatchToken Symbol [ "." ] (fun () -> [ parseIdentifier () ])
        |> Option.defaultValue []) // retroactively resolve first id as class or var name, and find the subroutine name
     @ [ expect Symbol [ "(" ]; parseExpressionList (); expect Symbol [ ")" ] ]
 
 and parseExpressionList () =
+    // (expression (',' expression)* )?
     match currentToken () with
-    | (Symbol, ")") -> [] // empty expression list -- AFTER(expressionList) = {")"}
+    | (Symbol, ")") -> [] // empty expression list -- FOLLOW(expressionList) = {")"}
     | _ ->
         [ parseExpression () ]
         @ parseStarFlat (fun () -> tryMatchToken Symbol [ "," ] (fun () -> [ parseExpression () ]))
@@ -137,7 +140,6 @@ and parseExpressionList () =
 //#endregion
 
 //#region statement parsing functions
-
 
 let rec parseStatements () =
     // statement*
@@ -203,6 +205,7 @@ let rec parseStatements () =
 
     // statements: statement*
     parseStar parseStatement |> makeNode "statements"
+
 //#endregion
 
 //#region program structure parsing functions

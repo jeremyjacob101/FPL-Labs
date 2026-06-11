@@ -35,6 +35,6 @@ let main argv =
 
         let xmlContent = writeNode tree 0
 
-        File.WriteAllText(outputPath, xmlContent)
+        File.WriteAllText(outputPath, xmlContent + "\n")
 
     0
