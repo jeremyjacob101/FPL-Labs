@@ -1,2 +1,2 @@
 #!/bin/sh
-zip -j zips/Lab-0.zip Program.fs Lab-0/Reading.fs submitters.txt
+zip -r zips/targil04-345570451-209792266.zip Program.fs Lab-4 *.fsproj submitters.txt
