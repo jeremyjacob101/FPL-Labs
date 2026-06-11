@@ -12,13 +12,16 @@ let tokenTagName kind =
     | StringConst -> "stringConstant"
     | _ -> kind.ToString().ToLower()
 
+let xmlValue (value: string) =
+    value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")
+
 let rec writeNode (node: Node) (level: int) =
     let indentStr = indent level
 
     match node with
     | Token(kind, value) ->
         let tagName = tokenTagName kind
-        sprintf "%s<%s> %s </%s>" indentStr tagName value tagName
+        sprintf "%s<%s> %s </%s>" indentStr tagName (xmlValue value) tagName
     | Node(kind, children) ->
         [ sprintf "%s<%s>" indentStr kind
           children
