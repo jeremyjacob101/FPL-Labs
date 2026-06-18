@@ -28,12 +28,13 @@ let main argv =
             Path.GetDirectoryName path
             + "/"
             + Path.GetFileNameWithoutExtension path
-            + "Out"
+            + "AST"
             + ".xml"
 
         let tree = parseProgram (Path.GetFileNameWithoutExtension path) tokens
 
-        let xmlContent = writeNode tree 0
+        let xmlContent = writeNode 0 tree
+        // let xmlContent = writeNode tree 0
 
         File.WriteAllText(outputPath, xmlContent + "\n")
 

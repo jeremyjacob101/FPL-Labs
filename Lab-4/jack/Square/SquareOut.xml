@@ -516,17 +516,11 @@
                 <symbol> , </symbol>
                 <expression>
                   <term>
-                    <symbol> ( </symbol>
-                    <expression>
-                      <term>
-                        <identifier> y </identifier>
-                      </term>
-                      <symbol> + </symbol>
-                      <term>
-                        <identifier> size </identifier>
-                      </term>
-                    </expression>
-                    <symbol> ) </symbol>
+                    <identifier> y </identifier>
+                  </term>
+                  <symbol> + </symbol>
+                  <term>
+                    <identifier> size </identifier>
                   </term>
                   <symbol> - </symbol>
                   <term>
@@ -781,17 +775,11 @@
                 <symbol> , </symbol>
                 <expression>
                   <term>
-                    <symbol> ( </symbol>
-                    <expression>
-                      <term>
-                        <identifier> y </identifier>
-                      </term>
-                      <symbol> + </symbol>
-                      <term>
-                        <identifier> size </identifier>
-                      </term>
-                    </expression>
-                    <symbol> ) </symbol>
+                    <identifier> y </identifier>
+                  </term>
+                  <symbol> + </symbol>
+                  <term>
+                    <identifier> size </identifier>
                   </term>
                   <symbol> - </symbol>
                   <term>
@@ -884,17 +872,11 @@
               <expressionList>
                 <expression>
                   <term>
-                    <symbol> ( </symbol>
-                    <expression>
-                      <term>
-                        <identifier> x </identifier>
-                      </term>
-                      <symbol> + </symbol>
-                      <term>
-                        <identifier> size </identifier>
-                      </term>
-                    </expression>
-                    <symbol> ) </symbol>
+                    <identifier> x </identifier>
+                  </term>
+                  <symbol> + </symbol>
+                  <term>
+                    <identifier> size </identifier>
                   </term>
                   <symbol> - </symbol>
                   <term>
@@ -1149,17 +1131,11 @@
               <expressionList>
                 <expression>
                   <term>
-                    <symbol> ( </symbol>
-                    <expression>
-                      <term>
-                        <identifier> x </identifier>
-                      </term>
-                      <symbol> + </symbol>
-                      <term>
-                        <identifier> size </identifier>
-                      </term>
-                    </expression>
-                    <symbol> ) </symbol>
+                    <identifier> x </identifier>
+                  </term>
+                  <symbol> + </symbol>
+                  <term>
+                    <identifier> size </identifier>
                   </term>
                   <symbol> - </symbol>
                   <term>

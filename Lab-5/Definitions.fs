@@ -61,3 +61,4 @@ type Token = TokenType * string
 type Node =
     | Token of TokenType * string
     | Node of string * Node list
+    | Empty

@@ -1,0 +1,153 @@
+<class>
+  <identifier> Main </identifier>
+  <classVarDec>
+    <keyword> static </keyword>
+    <keyword> boolean </keyword>
+    <identifier> test </identifier>
+  </classVarDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier> main </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <varDec>
+        <identifier> SquareGame </identifier>
+        <identifier> game </identifier>
+      </varDec>
+      <statements>
+        <letStatement>
+          <identifier> game </identifier>
+          <expression>
+            <subroutineCall>
+              <subroutineCallPrefix>
+                <identifier> SquareGame </identifier>
+                <identifier> new </identifier>
+              </subroutineCallPrefix>
+              <expressionList>
+              </expressionList>
+            </subroutineCall>
+          </expression>
+        </letStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> game </identifier>
+              <identifier> run </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> game </identifier>
+              <identifier> dispose </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier> more </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <varDec>
+        <keyword> int </keyword>
+        <identifier> i </identifier>
+        <identifier> j </identifier>
+      </varDec>
+      <varDec>
+        <identifier> String </identifier>
+        <identifier> s </identifier>
+      </varDec>
+      <varDec>
+        <identifier> Array </identifier>
+        <identifier> a </identifier>
+      </varDec>
+      <statements>
+        <ifStatement>
+          <expression>
+            <keyword> false </keyword>
+          </expression>
+          <statements>
+            <letStatement>
+              <identifier> s </identifier>
+              <expression>
+                <stringConstant> string constant </stringConstant>
+              </expression>
+            </letStatement>
+            <letStatement>
+              <identifier> s </identifier>
+              <expression>
+                <keyword> null </keyword>
+              </expression>
+            </letStatement>
+            <letStatement>
+              <identifier> a </identifier>
+              <expression>
+                <integerConstant> 1 </integerConstant>
+              </expression>
+              <expression>
+                <arrayAccess>
+                  <identifier> a </identifier>
+                  <expression>
+                    <integerConstant> 2 </integerConstant>
+                  </expression>
+                </arrayAccess>
+              </expression>
+            </letStatement>
+          </statements>
+          <statements>
+            <letStatement>
+              <identifier> i </identifier>
+              <expression>
+                <identifier> i </identifier>
+                <symbol> * </symbol>
+                <expression>
+                  <unaryOpTerm>
+                    <symbol> - </symbol>
+                    <identifier> j </identifier>
+                  </unaryOpTerm>
+                </expression>
+              </expression>
+            </letStatement>
+            <letStatement>
+              <identifier> j </identifier>
+              <expression>
+                <identifier> j </identifier>
+                <symbol> / </symbol>
+                <expression>
+                  <unaryOpTerm>
+                    <symbol> - </symbol>
+                    <integerConstant> 2 </integerConstant>
+                  </unaryOpTerm>
+                </expression>
+              </expression>
+            </letStatement>
+            <letStatement>
+              <identifier> i </identifier>
+              <expression>
+                <identifier> i </identifier>
+                <symbol> | </symbol>
+                <identifier> j </identifier>
+              </expression>
+            </letStatement>
+          </statements>
+        </ifStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+</class>

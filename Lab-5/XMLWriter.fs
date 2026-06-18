@@ -15,7 +15,7 @@ let tokenTagName kind =
 let xmlValue (value: string) =
     value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")
 
-let rec writeNode (node: Node) (level: int) =
+let rec writeNode (level: int) (node: Node) =
     let indentStr = indent level
 
     match node with
@@ -25,8 +25,10 @@ let rec writeNode (node: Node) (level: int) =
     | Node(kind, children) ->
         [ sprintf "%s<%s>" indentStr kind
           children
-          |> List.map (fun child -> writeNode child (level + 1))
+          |> List.map (writeNode (level + 1))
+          |> List.filter isNotEmptyString
           |> String.concat "\n"
           sprintf "%s</%s>" indentStr kind ]
         |> List.filter isNotEmptyString
         |> String.concat "\n"
+    | Empty -> ""

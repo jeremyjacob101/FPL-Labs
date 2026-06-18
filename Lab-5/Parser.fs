@@ -23,7 +23,7 @@ let matchToken (kind: TokenType) (value: string list) : bool =
        | _ -> List.contains tokenValue value
 
 // expect the current token to match the given kind and value, advance, and return it as a Node; otherwise throw an error
-let expect (kind: TokenType) (value: string list) : Node =
+let expectToken kind value =
     let tokenKind, tokenValue = currentToken ()
 
     if matchToken kind value then
@@ -33,11 +33,16 @@ let expect (kind: TokenType) (value: string list) : Node =
     else
         failwithf "[%s] Expected %A '%A' but got %A '%A'" fileName kind value tokenKind tokenValue
 
+let expect kind value =
+    expectToken kind value |> ignore // match and advance but don't create a node
+    Empty
+
 // try to match the current token against the given kind and value, and if it matches, advance and return an optional Node list containing it followed by the result of getRest; otherwise return None
 // useful for parsing optional tokens like commas in a list, where we want to return the parsed item if it exists, but also continue parsing the rest of the list, or elements which can appear multiple times, like variable declarations, where we want to return the parsed item if it exists, but also continue parsing the next declaration
-let tryMatchToken (kind: TokenType) (value: string list) getRest : Node list option =
+let tryMatchToken (keep: bool) (kind: TokenType) (value: string list) getRest : Node list option =
     if matchToken kind value then
-        Some([ expect kind value ] @ getRest ())
+        let token = expectToken kind value
+        Some([ if keep then token else Empty ] @ getRest ())
     else
         None
 
@@ -63,17 +68,17 @@ let parseStar fn =
 
 //#region Parsing functions
 
-let parseIdentifier () = expect Identifier []
+let parseIdentifier () = expectToken Identifier []
 
 //#region expression parsing functions
 
 let parseOp () =
-    expect Symbol [ "+"; "-"; "*"; "/"; "&"; "|"; "<"; ">"; "=" ]
+    expectToken Symbol [ "+"; "-"; "*"; "/"; "&"; "|"; "<"; ">"; "=" ]
 
-let parseUnaryOp () = expect Symbol [ "-"; "~" ]
+let parseUnaryOp () = expectToken Symbol [ "-"; "~" ]
 
 let parseKeywordConstant () =
-    expect Keyword [ "true"; "false"; "null"; "this" ]
+    expectToken Keyword [ "true"; "false"; "null"; "this" ]
 
 // use `let rec` and `and` to allow mutually recursive parsing functions,
 //which we will need for expressions since they can be nested and can also contain subroutine calls
@@ -104,11 +109,11 @@ and parseExpression () =
 and parseTerm () =
     // integerConstant | stringConstant | keywordConstant | varName | varName '[' expression ']' | subroutineCall | '(' expression ')' | unaryOp term
     match currentToken () with
-    | (IntConst, _) -> [ expect IntConst [] ]
-    | (StringConst, _) -> [ expect StringConst [] ]
-    | (Keyword, ("true" | "false" | "null" | "this")) -> [ parseKeywordConstant () ]
-    | (Symbol, "(") -> [ expect Symbol [ "(" ]; parseExpression (); expect Symbol [ ")" ] ]
-    | (Symbol, ("-" | "~")) -> [ parseUnaryOp (); parseTerm () ]
+    | (IntConst, _) -> expectToken IntConst []
+    | (StringConst, _) -> expectToken StringConst []
+    | (Keyword, ("true" | "false" | "null" | "this")) -> parseKeywordConstant ()
+    | (Symbol, "(") -> [ expect Symbol [ "(" ]; parseExpression (); expect Symbol [ ")" ] ][1] // return the expression node, not the parentheses
+    | (Symbol, ("-" | "~")) -> [ parseUnaryOp (); parseTerm () ] |> makeNode "unaryOpTerm"
     | (Identifier, _) ->
         match peekToken 1 with
         | (Symbol, "[") ->
@@ -116,17 +121,20 @@ and parseTerm () =
               expect Symbol [ "[" ]
               parseExpression ()
               expect Symbol [ "]" ] ]
+            |> makeNode "arrayAccess"
         | (Symbol, ("(" | ".")) -> parseSubroutineCall ()
-        | _ -> [ parseIdentifier () ]
+        | _ -> parseIdentifier ()
     | _ -> failwithf "[%s] Expected term but got %A" fileName (currentToken ())
-    |> makeNode "term"
+// |> makeNode "term"
 
 and parseSubroutineCall () =
     // subroutineName '(' expressionList ')' | ( className | varName) '.' subroutineName '(' expressionList ')'
-    [ parseIdentifier () ] // subroutine name or className|varName
-    @ (tryMatchToken Symbol [ "." ] (fun () -> [ parseIdentifier () ])
-       |> Option.defaultValue []) // retroactively resolve first id as class or var name, and find the subroutine name
+    [ [ parseIdentifier () ] // subroutine name or className|varName
+      @ (tryMatchToken false Symbol [ "." ] (fun () -> [ parseIdentifier () ])
+         |> Option.defaultValue []) // retroactively resolve first id as class or var name, and find the subroutine name
+      |> makeNode "subroutineCallPrefix" ]
     @ [ expect Symbol [ "(" ]; parseExpressionList (); expect Symbol [ ")" ] ]
+    |> makeNode "subroutineCall"
 
 and parseExpressionList () =
     // (expression (',' expression)* )?
@@ -134,7 +142,7 @@ and parseExpressionList () =
     | (Symbol, ")") -> [] // empty expression list -- FOLLOW(expressionList) = {")"}
     | _ ->
         [ parseExpression () ]
-        @ parseStarFlat (fun () -> tryMatchToken Symbol [ "," ] (fun () -> [ parseExpression () ]))
+        @ parseStarFlat (fun () -> tryMatchToken false Symbol [ "," ] (fun () -> [ parseExpression () ]))
     |> makeNode "expressionList"
 
 //#endregion
@@ -150,7 +158,7 @@ let rec parseStatements () =
         // 'let' varName ('[' expression ']')? '=' expression ';'
         [ expect Keyword [ "let" ]; parseIdentifier () ] // var name
         // optional array access
-        @ (tryMatchToken Symbol [ "[" ] (fun () -> [ parseExpression (); expect Symbol [ "]" ] ])
+        @ (tryMatchToken false Symbol [ "[" ] (fun () -> [ parseExpression (); expect Symbol [ "]" ] ])
            |> Option.defaultValue [])
         @ [ expect Symbol [ "=" ]; parseExpression (); expect Symbol [ ";" ] ]
         |> makeNode "letStatement"
@@ -165,7 +173,7 @@ let rec parseStatements () =
           parseStatements ()
           expect Symbol [ "}" ] ]
         // optional else clause
-        @ (tryMatchToken Keyword [ "else" ] (fun () ->
+        @ (tryMatchToken false Keyword [ "else" ] (fun () ->
             [ expect Symbol [ "{" ]; parseStatements (); expect Symbol [ "}" ] ])
            |> Option.defaultValue [])
         |> makeNode "ifStatement"
@@ -183,7 +191,7 @@ let rec parseStatements () =
 
     let parseDoStatement () =
         // 'do' subroutineCall ';'
-        [ expect Keyword [ "do" ] ] @ parseSubroutineCall () @ [ expect Symbol [ ";" ] ]
+        [ expect Keyword [ "do" ]; parseSubroutineCall (); expect Symbol [ ";" ] ]
         |> makeNode "doStatement"
 
     let parseReturnStatement () =
@@ -213,34 +221,35 @@ let rec parseStatements () =
 let parseType () =
     // 'int' | 'char' | 'boolean' | className
     match currentToken () with
-    | (Keyword, _) -> expect Keyword [ "int"; "char"; "boolean" ]
+    | (Keyword, _) -> expectToken Keyword [ "int"; "char"; "boolean" ]
     | (Identifier, _) -> parseIdentifier () // class name
     | _ -> failwithf "[%s] Expected type but got %A" fileName (currentToken ())
 
 let parseClassVarDec () =
     // ('static' | 'field' ) type varName (',' varName)* ';'
-    tryMatchToken Keyword [ "static"; "field" ] (fun () ->
+    tryMatchToken true Keyword [ "static"; "field" ] (fun () ->
         [ parseType (); parseIdentifier () ] // var name
-        @ parseStarFlat (fun () -> tryMatchToken Symbol [ "," ] (fun () -> [ parseIdentifier () ]))
+        @ parseStarFlat (fun () -> tryMatchToken false Symbol [ "," ] (fun () -> [ parseIdentifier () ]))
         @ [ expect Symbol [ ";" ] ])
     |> Option.map (makeNode "classVarDec")
 
 let parseParameterList () =
     // ( (type varName) (',' type varName)*)?
-    let parseIndividualParam () = [ parseType (); parseIdentifier () ]
+    let parseIndividualParam () =
+        [ parseType (); parseIdentifier () ] |> makeNode "parameter"
 
     match currentToken () with
     | (Symbol, ")") -> []
     | _ ->
-        parseIndividualParam ()
-        @ parseStarFlat (fun () -> tryMatchToken Symbol [ "," ] parseIndividualParam)
+        [ parseIndividualParam () ]
+        @ parseStarFlat (fun () -> tryMatchToken false Symbol [ "," ] (fun () -> [ parseIndividualParam () ]))
     |> makeNode "parameterList"
 
 let parseVarDec () =
     // 'var' type varName (',' varName)* ';
-    tryMatchToken Keyword [ "var" ] (fun () ->
+    tryMatchToken false Keyword [ "var" ] (fun () ->
         [ parseType (); parseIdentifier () ] // var name
-        @ parseStarFlat (fun () -> tryMatchToken Symbol [ "," ] (fun () -> [ parseIdentifier () ]))
+        @ parseStarFlat (fun () -> tryMatchToken false Symbol [ "," ] (fun () -> [ parseIdentifier () ]))
         @ [ expect Symbol [ ";" ] ])
     |> Option.map (makeNode "varDec")
 
@@ -253,9 +262,9 @@ let parseSubroutineBody () =
 
 let parseSubroutineDec () =
     // ('constructor' | 'function' | 'method') ('void' | type) subroutineName '('parameterList ')' subroutineBody
-    tryMatchToken Keyword [ "constructor"; "function"; "method" ] (fun () ->
+    tryMatchToken true Keyword [ "constructor"; "function"; "method" ] (fun () ->
         [ (if matchToken Keyword [ "void" ] then
-               expect Keyword [ "void" ]
+               expectToken Keyword [ "void" ]
            else
                parseType ())
           parseIdentifier () // subroutine name

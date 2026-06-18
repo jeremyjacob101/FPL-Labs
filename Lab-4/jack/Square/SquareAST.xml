@@ -1,0 +1,767 @@
+<class>
+  <identifier> Square </identifier>
+  <classVarDec>
+    <keyword> field </keyword>
+    <keyword> int </keyword>
+    <identifier> x </identifier>
+    <identifier> y </identifier>
+  </classVarDec>
+  <classVarDec>
+    <keyword> field </keyword>
+    <keyword> int </keyword>
+    <identifier> size </identifier>
+  </classVarDec>
+  <subroutineDec>
+    <keyword> constructor </keyword>
+    <identifier> Square </identifier>
+    <identifier> new </identifier>
+    <parameterList>
+      <parameter>
+        <keyword> int </keyword>
+        <identifier> Ax </identifier>
+      </parameter>
+      <parameter>
+        <keyword> int </keyword>
+        <identifier> Ay </identifier>
+      </parameter>
+      <parameter>
+        <keyword> int </keyword>
+        <identifier> Asize </identifier>
+      </parameter>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <letStatement>
+          <identifier> x </identifier>
+          <expression>
+            <identifier> Ax </identifier>
+          </expression>
+        </letStatement>
+        <letStatement>
+          <identifier> y </identifier>
+          <expression>
+            <identifier> Ay </identifier>
+          </expression>
+        </letStatement>
+        <letStatement>
+          <identifier> size </identifier>
+          <expression>
+            <identifier> Asize </identifier>
+          </expression>
+        </letStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> draw </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+          <expression>
+            <keyword> this </keyword>
+          </expression>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> dispose </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Memory </identifier>
+              <identifier> deAlloc </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <keyword> this </keyword>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> draw </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Screen </identifier>
+              <identifier> setColor </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <keyword> true </keyword>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Screen </identifier>
+              <identifier> drawRectangle </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <identifier> x </identifier>
+              </expression>
+              <expression>
+                <identifier> y </identifier>
+              </expression>
+              <expression>
+                <identifier> x </identifier>
+                <symbol> + </symbol>
+                <identifier> size </identifier>
+              </expression>
+              <expression>
+                <identifier> y </identifier>
+                <symbol> + </symbol>
+                <identifier> size </identifier>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> erase </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Screen </identifier>
+              <identifier> setColor </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <keyword> false </keyword>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Screen </identifier>
+              <identifier> drawRectangle </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <identifier> x </identifier>
+              </expression>
+              <expression>
+                <identifier> y </identifier>
+              </expression>
+              <expression>
+                <identifier> x </identifier>
+                <symbol> + </symbol>
+                <identifier> size </identifier>
+              </expression>
+              <expression>
+                <identifier> y </identifier>
+                <symbol> + </symbol>
+                <identifier> size </identifier>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> incSize </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <ifStatement>
+          <expression>
+            <expression>
+              <expression>
+                <identifier> y </identifier>
+                <symbol> + </symbol>
+                <identifier> size </identifier>
+              </expression>
+              <symbol> &lt; </symbol>
+              <integerConstant> 254 </integerConstant>
+            </expression>
+            <symbol> &amp; </symbol>
+            <expression>
+              <expression>
+                <identifier> x </identifier>
+                <symbol> + </symbol>
+                <identifier> size </identifier>
+              </expression>
+              <symbol> &lt; </symbol>
+              <integerConstant> 510 </integerConstant>
+            </expression>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> erase </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <letStatement>
+              <identifier> size </identifier>
+              <expression>
+                <identifier> size </identifier>
+                <symbol> + </symbol>
+                <integerConstant> 2 </integerConstant>
+              </expression>
+            </letStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> draw </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> decSize </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <ifStatement>
+          <expression>
+            <identifier> size </identifier>
+            <symbol> &gt; </symbol>
+            <integerConstant> 2 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> erase </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <letStatement>
+              <identifier> size </identifier>
+              <expression>
+                <identifier> size </identifier>
+                <symbol> - </symbol>
+                <integerConstant> 2 </integerConstant>
+              </expression>
+            </letStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> draw </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> moveUp </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <ifStatement>
+          <expression>
+            <identifier> y </identifier>
+            <symbol> &gt; </symbol>
+            <integerConstant> 1 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> setColor </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <keyword> false </keyword>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> drawRectangle </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> x </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                    <symbol> - </symbol>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <letStatement>
+              <identifier> y </identifier>
+              <expression>
+                <identifier> y </identifier>
+                <symbol> - </symbol>
+                <integerConstant> 2 </integerConstant>
+              </expression>
+            </letStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> setColor </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <keyword> true </keyword>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> drawRectangle </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> x </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> moveDown </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <ifStatement>
+          <expression>
+            <expression>
+              <identifier> y </identifier>
+              <symbol> + </symbol>
+              <identifier> size </identifier>
+            </expression>
+            <symbol> &lt; </symbol>
+            <integerConstant> 254 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> setColor </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <keyword> false </keyword>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> drawRectangle </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> x </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <letStatement>
+              <identifier> y </identifier>
+              <expression>
+                <identifier> y </identifier>
+                <symbol> + </symbol>
+                <integerConstant> 2 </integerConstant>
+              </expression>
+            </letStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> setColor </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <keyword> true </keyword>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> drawRectangle </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> x </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                    <symbol> - </symbol>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> moveLeft </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <ifStatement>
+          <expression>
+            <identifier> x </identifier>
+            <symbol> &gt; </symbol>
+            <integerConstant> 1 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> setColor </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <keyword> false </keyword>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> drawRectangle </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                    <symbol> - </symbol>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <letStatement>
+              <identifier> x </identifier>
+              <expression>
+                <identifier> x </identifier>
+                <symbol> - </symbol>
+                <integerConstant> 2 </integerConstant>
+              </expression>
+            </letStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> setColor </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <keyword> true </keyword>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> drawRectangle </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> x </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> moveRight </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <ifStatement>
+          <expression>
+            <expression>
+              <identifier> x </identifier>
+              <symbol> + </symbol>
+              <identifier> size </identifier>
+            </expression>
+            <symbol> &lt; </symbol>
+            <integerConstant> 510 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> setColor </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <keyword> false </keyword>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> drawRectangle </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> x </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <letStatement>
+              <identifier> x </identifier>
+              <expression>
+                <identifier> x </identifier>
+                <symbol> + </symbol>
+                <integerConstant> 2 </integerConstant>
+              </expression>
+            </letStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> setColor </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <keyword> true </keyword>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Screen </identifier>
+                  <identifier> drawRectangle </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                    <symbol> - </symbol>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> x </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> y </identifier>
+                    <symbol> + </symbol>
+                    <identifier> size </identifier>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+</class>

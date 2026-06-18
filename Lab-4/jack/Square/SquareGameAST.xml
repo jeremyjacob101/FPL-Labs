@@ -1,0 +1,412 @@
+<class>
+  <identifier> SquareGame </identifier>
+  <classVarDec>
+    <keyword> field </keyword>
+    <identifier> Square </identifier>
+    <identifier> square </identifier>
+  </classVarDec>
+  <classVarDec>
+    <keyword> field </keyword>
+    <keyword> int </keyword>
+    <identifier> direction </identifier>
+  </classVarDec>
+  <subroutineDec>
+    <keyword> constructor </keyword>
+    <identifier> SquareGame </identifier>
+    <identifier> new </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <letStatement>
+          <identifier> square </identifier>
+          <expression>
+            <subroutineCall>
+              <subroutineCallPrefix>
+                <identifier> Square </identifier>
+                <identifier> new </identifier>
+              </subroutineCallPrefix>
+              <expressionList>
+                <expression>
+                  <integerConstant> 0 </integerConstant>
+                </expression>
+                <expression>
+                  <integerConstant> 0 </integerConstant>
+                </expression>
+                <expression>
+                  <integerConstant> 30 </integerConstant>
+                </expression>
+              </expressionList>
+            </subroutineCall>
+          </expression>
+        </letStatement>
+        <letStatement>
+          <identifier> direction </identifier>
+          <expression>
+            <integerConstant> 0 </integerConstant>
+          </expression>
+        </letStatement>
+        <returnStatement>
+          <expression>
+            <keyword> this </keyword>
+          </expression>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> dispose </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> square </identifier>
+              <identifier> dispose </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Memory </identifier>
+              <identifier> deAlloc </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <keyword> this </keyword>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> moveSquare </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <ifStatement>
+          <expression>
+            <identifier> direction </identifier>
+            <symbol> = </symbol>
+            <integerConstant> 1 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> square </identifier>
+                  <identifier> moveUp </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <ifStatement>
+          <expression>
+            <identifier> direction </identifier>
+            <symbol> = </symbol>
+            <integerConstant> 2 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> square </identifier>
+                  <identifier> moveDown </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <ifStatement>
+          <expression>
+            <identifier> direction </identifier>
+            <symbol> = </symbol>
+            <integerConstant> 3 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> square </identifier>
+                  <identifier> moveLeft </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <ifStatement>
+          <expression>
+            <identifier> direction </identifier>
+            <symbol> = </symbol>
+            <integerConstant> 4 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> square </identifier>
+                  <identifier> moveRight </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+          </statements>
+        </ifStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Sys </identifier>
+              <identifier> wait </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <integerConstant> 5 </integerConstant>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> method </keyword>
+    <keyword> void </keyword>
+    <identifier> run </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <varDec>
+        <keyword> char </keyword>
+        <identifier> key </identifier>
+      </varDec>
+      <varDec>
+        <keyword> boolean </keyword>
+        <identifier> exit </identifier>
+      </varDec>
+      <statements>
+        <letStatement>
+          <identifier> exit </identifier>
+          <expression>
+            <keyword> false </keyword>
+          </expression>
+        </letStatement>
+        <whileStatement>
+          <expression>
+            <unaryOpTerm>
+              <symbol> ~ </symbol>
+              <identifier> exit </identifier>
+            </unaryOpTerm>
+          </expression>
+          <statements>
+            <whileStatement>
+              <expression>
+                <identifier> key </identifier>
+                <symbol> = </symbol>
+                <integerConstant> 0 </integerConstant>
+              </expression>
+              <statements>
+                <letStatement>
+                  <identifier> key </identifier>
+                  <expression>
+                    <subroutineCall>
+                      <subroutineCallPrefix>
+                        <identifier> Keyboard </identifier>
+                        <identifier> keyPressed </identifier>
+                      </subroutineCallPrefix>
+                      <expressionList>
+                      </expressionList>
+                    </subroutineCall>
+                  </expression>
+                </letStatement>
+                <doStatement>
+                  <subroutineCall>
+                    <subroutineCallPrefix>
+                      <identifier> moveSquare </identifier>
+                    </subroutineCallPrefix>
+                    <expressionList>
+                    </expressionList>
+                  </subroutineCall>
+                </doStatement>
+              </statements>
+            </whileStatement>
+            <ifStatement>
+              <expression>
+                <identifier> key </identifier>
+                <symbol> = </symbol>
+                <integerConstant> 81 </integerConstant>
+              </expression>
+              <statements>
+                <letStatement>
+                  <identifier> exit </identifier>
+                  <expression>
+                    <keyword> true </keyword>
+                  </expression>
+                </letStatement>
+              </statements>
+            </ifStatement>
+            <ifStatement>
+              <expression>
+                <identifier> key </identifier>
+                <symbol> = </symbol>
+                <integerConstant> 90 </integerConstant>
+              </expression>
+              <statements>
+                <doStatement>
+                  <subroutineCall>
+                    <subroutineCallPrefix>
+                      <identifier> square </identifier>
+                      <identifier> decSize </identifier>
+                    </subroutineCallPrefix>
+                    <expressionList>
+                    </expressionList>
+                  </subroutineCall>
+                </doStatement>
+              </statements>
+            </ifStatement>
+            <ifStatement>
+              <expression>
+                <identifier> key </identifier>
+                <symbol> = </symbol>
+                <integerConstant> 88 </integerConstant>
+              </expression>
+              <statements>
+                <doStatement>
+                  <subroutineCall>
+                    <subroutineCallPrefix>
+                      <identifier> square </identifier>
+                      <identifier> incSize </identifier>
+                    </subroutineCallPrefix>
+                    <expressionList>
+                    </expressionList>
+                  </subroutineCall>
+                </doStatement>
+              </statements>
+            </ifStatement>
+            <ifStatement>
+              <expression>
+                <identifier> key </identifier>
+                <symbol> = </symbol>
+                <integerConstant> 131 </integerConstant>
+              </expression>
+              <statements>
+                <letStatement>
+                  <identifier> direction </identifier>
+                  <expression>
+                    <integerConstant> 1 </integerConstant>
+                  </expression>
+                </letStatement>
+              </statements>
+            </ifStatement>
+            <ifStatement>
+              <expression>
+                <identifier> key </identifier>
+                <symbol> = </symbol>
+                <integerConstant> 133 </integerConstant>
+              </expression>
+              <statements>
+                <letStatement>
+                  <identifier> direction </identifier>
+                  <expression>
+                    <integerConstant> 2 </integerConstant>
+                  </expression>
+                </letStatement>
+              </statements>
+            </ifStatement>
+            <ifStatement>
+              <expression>
+                <identifier> key </identifier>
+                <symbol> = </symbol>
+                <integerConstant> 130 </integerConstant>
+              </expression>
+              <statements>
+                <letStatement>
+                  <identifier> direction </identifier>
+                  <expression>
+                    <integerConstant> 3 </integerConstant>
+                  </expression>
+                </letStatement>
+              </statements>
+            </ifStatement>
+            <ifStatement>
+              <expression>
+                <identifier> key </identifier>
+                <symbol> = </symbol>
+                <integerConstant> 132 </integerConstant>
+              </expression>
+              <statements>
+                <letStatement>
+                  <identifier> direction </identifier>
+                  <expression>
+                    <integerConstant> 4 </integerConstant>
+                  </expression>
+                </letStatement>
+              </statements>
+            </ifStatement>
+            <whileStatement>
+              <expression>
+                <unaryOpTerm>
+                  <symbol> ~ </symbol>
+                  <expression>
+                    <identifier> key </identifier>
+                    <symbol> = </symbol>
+                    <integerConstant> 0 </integerConstant>
+                  </expression>
+                </unaryOpTerm>
+              </expression>
+              <statements>
+                <letStatement>
+                  <identifier> key </identifier>
+                  <expression>
+                    <subroutineCall>
+                      <subroutineCallPrefix>
+                        <identifier> Keyboard </identifier>
+                        <identifier> keyPressed </identifier>
+                      </subroutineCallPrefix>
+                      <expressionList>
+                      </expressionList>
+                    </subroutineCall>
+                  </expression>
+                </letStatement>
+                <doStatement>
+                  <subroutineCall>
+                    <subroutineCallPrefix>
+                      <identifier> moveSquare </identifier>
+                    </subroutineCallPrefix>
+                    <expressionList>
+                    </expressionList>
+                  </subroutineCall>
+                </doStatement>
+              </statements>
+            </whileStatement>
+          </statements>
+        </whileStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+</class>
