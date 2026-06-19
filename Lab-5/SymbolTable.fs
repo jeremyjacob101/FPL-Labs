@@ -24,7 +24,7 @@ let mutable argumentCount = 0
 let mutable varCount = 0
 
 // Clear tables
-let startClass () =
+let resetScopes () =
     classTable <- []
     subroutineTable <- []
 
@@ -33,7 +33,7 @@ let startClass () =
     argumentCount <- 0
     varCount <- 0
 
-let startSubroutine () =
+let resetSubScope () =
     subroutineTable <- []
 
     argumentCount <- 0
@@ -87,3 +87,19 @@ let kindOf name =
 let indexOf name =
     let _, _, _, index = (lookup name).Value
     index
+
+// Get number of variables for each kind so we know how many to allocate
+let numVarsOfKind kind =
+    match kind with
+    | Static -> staticCount
+    | Field -> fieldCount
+    | Argument -> argumentCount
+    | Var -> varCount
+
+// Get segment string for vm kind
+let vmSegmentOf kind =
+    match kind with
+    | Static -> "static"
+    | Field -> "this"
+    | Argument -> "argument"
+    | Var -> "local"
