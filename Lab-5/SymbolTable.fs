@@ -68,5 +68,22 @@ let addToSymbolTable name typeName kind =
     | Static
     | Field -> classTable <- classTable @ [ symbol ]
     | Argument
-    | Var -> subroutineTable <- classTable @ [ symbol ]
+    | Var -> subroutineTable <- subroutineTable @ [ symbol ]
 
+// Do the table lookup (first in subroutine then fallback to class)
+let lookup name =
+    subroutineTable @ classTable
+    |> List.tryFind (fun (symbolName, _, _, _) -> symbolName = name)
+
+// Lookups
+let typeOf name =
+    let _, typeName, _, _ = (lookup name).Value
+    typeName
+
+let kindOf name =
+    let _, _, kind, _ = (lookup name).Value
+    kind
+
+let indexOf name =
+    let _, _, _, index = (lookup name).Value
+    index
