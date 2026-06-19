@@ -31,4 +31,4 @@ let rec writeNode (level: int) (node: Node) =
           sprintf "%s</%s>" indentStr kind ]
         |> List.filter isNotEmptyString
         |> String.concat "\n"
-    | Empty -> ""
+    | Empty -> "<empty />"

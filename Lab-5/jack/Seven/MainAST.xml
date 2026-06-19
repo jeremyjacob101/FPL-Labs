@@ -1,0 +1,35 @@
+<class>
+  <identifier> Main </identifier>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier> main </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Output </identifier>
+              <identifier> printInt </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <integerConstant> 1 </integerConstant>
+                <symbol> + </symbol>
+                <expression>
+                  <integerConstant> 2 </integerConstant>
+                  <symbol> * </symbol>
+                  <integerConstant> 3 </integerConstant>
+                </expression>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+</class>

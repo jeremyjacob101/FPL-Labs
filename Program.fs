@@ -6,6 +6,7 @@ open Definitions
 open Tokenizer
 open Parser
 open XMLWriter
+open CodeGenerator
 
 let getJackFiles path =
     if File.Exists path then
@@ -25,17 +26,23 @@ let main argv =
 
     for path, tokens in tokenizedFiles do
         let outputPath =
+            Path.GetDirectoryName path + "/" + Path.GetFileNameWithoutExtension path + ".vm"
+
+        let xmlOutputPath =
             Path.GetDirectoryName path
             + "/"
             + Path.GetFileNameWithoutExtension path
-            + "AST"
-            + ".xml"
+            + "AST.xml"
 
         let tree = parseProgram (Path.GetFileNameWithoutExtension path) tokens
 
-        let xmlContent = writeNode 0 tree
-        // let xmlContent = writeNode tree 0
+        printfn "Generating code for %s at %s..." path outputPath
 
-        File.WriteAllText(outputPath, xmlContent + "\n")
+        let xmlContent = writeNode 0 tree
+        File.WriteAllText(xmlOutputPath, xmlContent + "\n")
+
+        let f = File.Open(outputPath, FileMode.Create, FileAccess.Write)
+        writeProgram f tree
+        f.Close()
 
     0
