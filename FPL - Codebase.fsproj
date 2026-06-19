@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Include="Lab-5/Definitions.fs" />
+    <Compile Include="Lab-5/SymbolTable.fs" />
     <Compile Include="Lab-5/Tokenizer.fs" />
     <Compile Include="Lab-5/Parser.fs" />
     <Compile Include="Lab-5/XMLWriter.fs" />
