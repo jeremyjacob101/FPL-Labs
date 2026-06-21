@@ -62,3 +62,25 @@ type Node =
     | Token of TokenType * string
     | Node of string * Node list
     | Empty
+
+
+type Segment =
+    | CONST
+    | ARG
+    | LOCAL
+    | STATIC
+    | THIS
+    | THAT
+    | POINTER
+    | TEMP
+
+type ArithmeticCommand =
+    | ADD
+    | SUB
+    | NEG
+    | EQ
+    | GT
+    | LT
+    | AND
+    | OR
+    | NOT
