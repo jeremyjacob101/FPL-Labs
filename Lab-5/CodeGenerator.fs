@@ -81,6 +81,12 @@ let getTypeName node =
             ""
     | _ -> ""
 
+let writePushVariable name =
+    writePush (kindOf name |> segmentOfSymbolKind) (indexOf name)
+
+let writePopVariable name =
+    writePop (kindOf name |> segmentOfSymbolKind) (indexOf name)
+
 //#region recursively travserse the parse tree and generate code
 
 
@@ -120,7 +126,7 @@ and writeSubroutineCall (nodes: Node list) =
 and writeTerm (node: Node) =
     match node with
     | Token(IntConst, value) -> writePush CONST (int value)
-    | Token(Identifier, id) -> writeData ("// push " + id) // TODO: fill in
+    | Token(Identifier, id) -> writePushVariable id
     | Token(Keyword, "true") ->
         writePush CONST 1
         writeArithmetic NEG // true is represented as -1 in Hack
@@ -157,9 +163,9 @@ let rec writeStatement node =
 
     let writeLetStatement (nodes: Node list) =
         writeExpression (List.last nodes)
-        let varSegment, varIndex = (LOCAL, 0) // TODO: use symbol table
+        
         // TODO: handle array access on the left hand side. Base var is nodes[0], index expression is nodes[1]
-        writePop varSegment varIndex
+        writePopVariable (getTokenValue Identifier nodes[0])
 
     let writeIfStatement (nodes: Node list) =
         let afterLabel = nextLabel "IF_AFTER_"
