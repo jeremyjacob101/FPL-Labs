@@ -198,6 +198,10 @@ let writeSubroutine className node =
 
     let children = getChildren "subroutineDec" node
     let subroutineType = getTokenValue Keyword children[0]
+
+    if subroutineType = "method" then
+        addToSymbolTable "this" className Argument
+
     let returnType = getTypeName children[1]
     let subroutineName = className + "." + getTokenValue Identifier children[2]
     currentFunctionName <- subroutineName
