@@ -1,0 +1,118 @@
+// class Main
+
+// function Main.main 0 -> void
+function Main.main 1
+	push const 8001
+	push const 16
+	push const 1
+	neg
+	call Main.fillMemory 3
+	pop temp 0
+	push const 8000
+	call Memory.peek 1
+	pop local 0
+// push value
+	call Main.convert 1
+	pop temp 0
+	push const 0
+	return
+	
+
+// function Main.convert 1 -> void
+function Main.convert 3
+	push const 1
+	neg
+	pop local 0
+	goto Main.convert$DO_COND_2
+	label Main.convert$LOOP_1
+// push position
+	push const 1
+	add
+	pop local 0
+// push mask
+	call Main.nextMask 1
+	pop local 0
+// push position
+	push const 16
+	gt
+	not
+	not
+	if-goto Main.convert$ELSE_4
+// push value
+// push mask
+	and
+	push const 0
+	eq
+	not
+	not
+	if-goto Main.convert$ELSE_6
+	push const 8000
+// push position
+	add
+	push const 1
+	call Memory.poke 2
+	pop temp 0
+	goto Main.convert$IF_AFTER_5
+	label Main.convert$ELSE_6
+	push const 8000
+// push position
+	add
+	push const 0
+	call Memory.poke 2
+	pop temp 0
+	label Main.convert$IF_AFTER_5
+	goto Main.convert$IF_AFTER_3
+	label Main.convert$ELSE_4
+	push const 0
+	pop local 0
+	label Main.convert$IF_AFTER_3
+	label Main.convert$DO_COND_2
+// push loop
+	if-goto Main.convert$LOOP_1
+	push const 0
+	return
+	
+
+// function Main.nextMask 1 -> int
+function Main.nextMask 0
+// push mask
+	push const 0
+	eq
+	not
+	if-goto Main.nextMask$ELSE_8
+	push const 1
+	return
+	goto Main.nextMask$IF_AFTER_7
+	label Main.nextMask$ELSE_8
+// push mask
+	push const 2
+	call Math.multiply 2
+	return
+	label Main.nextMask$IF_AFTER_7
+	
+
+// function Main.fillMemory 3 -> void
+function Main.fillMemory 0
+	goto Main.fillMemory$DO_COND_10
+	label Main.fillMemory$LOOP_9
+// push address
+// push value
+	call Memory.poke 2
+	pop temp 0
+// push length
+	push const 1
+	sub
+	pop local 0
+// push address
+	push const 1
+	add
+	pop local 0
+	label Main.fillMemory$DO_COND_10
+// push length
+	push const 0
+	gt
+	if-goto Main.fillMemory$LOOP_9
+	push const 0
+	return
+	
+

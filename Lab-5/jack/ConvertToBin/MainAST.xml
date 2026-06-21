@@ -1,0 +1,316 @@
+<class>
+  <identifier> Main </identifier>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier> main </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <varDec>
+        <keyword> int </keyword>
+        <identifier> value </identifier>
+      </varDec>
+      <statements>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Main </identifier>
+              <identifier> fillMemory </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <integerConstant> 8001 </integerConstant>
+              </expression>
+              <expression>
+                <integerConstant> 16 </integerConstant>
+              </expression>
+              <expression>
+                <unaryOpTerm>
+                  <symbol> - </symbol>
+                  <integerConstant> 1 </integerConstant>
+                </unaryOpTerm>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <letStatement>
+          <identifier> value </identifier>
+          <expression>
+            <subroutineCall>
+              <subroutineCallPrefix>
+                <identifier> Memory </identifier>
+                <identifier> peek </identifier>
+              </subroutineCallPrefix>
+              <expressionList>
+                <expression>
+                  <integerConstant> 8000 </integerConstant>
+                </expression>
+              </expressionList>
+            </subroutineCall>
+          </expression>
+        </letStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Main </identifier>
+              <identifier> convert </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <identifier> value </identifier>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier> convert </identifier>
+    <parameterList>
+      <parameter>
+        <keyword> int </keyword>
+        <identifier> value </identifier>
+      </parameter>
+    </parameterList>
+    <subroutineBody>
+      <varDec>
+        <keyword> int </keyword>
+        <identifier> mask </identifier>
+        <identifier> position </identifier>
+      </varDec>
+      <varDec>
+        <keyword> boolean </keyword>
+        <identifier> loop </identifier>
+      </varDec>
+      <statements>
+        <letStatement>
+          <identifier> loop </identifier>
+          <expression>
+            <keyword> true </keyword>
+          </expression>
+        </letStatement>
+        <whileStatement>
+          <expression>
+            <identifier> loop </identifier>
+          </expression>
+          <statements>
+            <letStatement>
+              <identifier> position </identifier>
+              <expression>
+                <identifier> position </identifier>
+                <symbol> + </symbol>
+                <integerConstant> 1 </integerConstant>
+              </expression>
+            </letStatement>
+            <letStatement>
+              <identifier> mask </identifier>
+              <expression>
+                <subroutineCall>
+                  <subroutineCallPrefix>
+                    <identifier> Main </identifier>
+                    <identifier> nextMask </identifier>
+                  </subroutineCallPrefix>
+                  <expressionList>
+                    <expression>
+                      <identifier> mask </identifier>
+                    </expression>
+                  </expressionList>
+                </subroutineCall>
+              </expression>
+            </letStatement>
+            <ifStatement>
+              <expression>
+                <unaryOpTerm>
+                  <symbol> ~ </symbol>
+                  <expression>
+                    <identifier> position </identifier>
+                    <symbol> &gt; </symbol>
+                    <integerConstant> 16 </integerConstant>
+                  </expression>
+                </unaryOpTerm>
+              </expression>
+              <statements>
+                <ifStatement>
+                  <expression>
+                    <unaryOpTerm>
+                      <symbol> ~ </symbol>
+                      <expression>
+                        <expression>
+                          <identifier> value </identifier>
+                          <symbol> &amp; </symbol>
+                          <identifier> mask </identifier>
+                        </expression>
+                        <symbol> = </symbol>
+                        <integerConstant> 0 </integerConstant>
+                      </expression>
+                    </unaryOpTerm>
+                  </expression>
+                  <statements>
+                    <doStatement>
+                      <subroutineCall>
+                        <subroutineCallPrefix>
+                          <identifier> Memory </identifier>
+                          <identifier> poke </identifier>
+                        </subroutineCallPrefix>
+                        <expressionList>
+                          <expression>
+                            <integerConstant> 8000 </integerConstant>
+                            <symbol> + </symbol>
+                            <identifier> position </identifier>
+                          </expression>
+                          <expression>
+                            <integerConstant> 1 </integerConstant>
+                          </expression>
+                        </expressionList>
+                      </subroutineCall>
+                    </doStatement>
+                  </statements>
+                  <statements>
+                    <doStatement>
+                      <subroutineCall>
+                        <subroutineCallPrefix>
+                          <identifier> Memory </identifier>
+                          <identifier> poke </identifier>
+                        </subroutineCallPrefix>
+                        <expressionList>
+                          <expression>
+                            <integerConstant> 8000 </integerConstant>
+                            <symbol> + </symbol>
+                            <identifier> position </identifier>
+                          </expression>
+                          <expression>
+                            <integerConstant> 0 </integerConstant>
+                          </expression>
+                        </expressionList>
+                      </subroutineCall>
+                    </doStatement>
+                  </statements>
+                </ifStatement>
+              </statements>
+              <statements>
+                <letStatement>
+                  <identifier> loop </identifier>
+                  <expression>
+                    <keyword> false </keyword>
+                  </expression>
+                </letStatement>
+              </statements>
+            </ifStatement>
+          </statements>
+        </whileStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> int </keyword>
+    <identifier> nextMask </identifier>
+    <parameterList>
+      <parameter>
+        <keyword> int </keyword>
+        <identifier> mask </identifier>
+      </parameter>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <ifStatement>
+          <expression>
+            <identifier> mask </identifier>
+            <symbol> = </symbol>
+            <integerConstant> 0 </integerConstant>
+          </expression>
+          <statements>
+            <returnStatement>
+              <expression>
+                <integerConstant> 1 </integerConstant>
+              </expression>
+            </returnStatement>
+          </statements>
+          <statements>
+            <returnStatement>
+              <expression>
+                <identifier> mask </identifier>
+                <symbol> * </symbol>
+                <integerConstant> 2 </integerConstant>
+              </expression>
+            </returnStatement>
+          </statements>
+        </ifStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier> fillMemory </identifier>
+    <parameterList>
+      <parameter>
+        <keyword> int </keyword>
+        <identifier> address </identifier>
+      </parameter>
+      <parameter>
+        <keyword> int </keyword>
+        <identifier> length </identifier>
+      </parameter>
+      <parameter>
+        <keyword> int </keyword>
+        <identifier> value </identifier>
+      </parameter>
+    </parameterList>
+    <subroutineBody>
+      <statements>
+        <whileStatement>
+          <expression>
+            <identifier> length </identifier>
+            <symbol> &gt; </symbol>
+            <integerConstant> 0 </integerConstant>
+          </expression>
+          <statements>
+            <doStatement>
+              <subroutineCall>
+                <subroutineCallPrefix>
+                  <identifier> Memory </identifier>
+                  <identifier> poke </identifier>
+                </subroutineCallPrefix>
+                <expressionList>
+                  <expression>
+                    <identifier> address </identifier>
+                  </expression>
+                  <expression>
+                    <identifier> value </identifier>
+                  </expression>
+                </expressionList>
+              </subroutineCall>
+            </doStatement>
+            <letStatement>
+              <identifier> length </identifier>
+              <expression>
+                <identifier> length </identifier>
+                <symbol> - </symbol>
+                <integerConstant> 1 </integerConstant>
+              </expression>
+            </letStatement>
+            <letStatement>
+              <identifier> address </identifier>
+              <expression>
+                <identifier> address </identifier>
+                <symbol> + </symbol>
+                <integerConstant> 1 </integerConstant>
+              </expression>
+            </letStatement>
+          </statements>
+        </whileStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+</class>
