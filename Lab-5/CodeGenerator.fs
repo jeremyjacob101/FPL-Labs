@@ -260,15 +260,7 @@ let writeSubroutine className node =
         |> List.skip 1 // skip only type (`var` kind is thrown away because subroutine varDec only way to get here: no new info)
         |> List.iter (fun node -> addToSymbolTable (getTokenValue Identifier node) (getTypeName varDecChildren[0]) Var))
 
-    // TODO: Maybe use symbol table for this? But this also works
-    let varDecCount =
-        varDecNodes
-        |> List.map (getChildren "varDec")
-        |> List.map List.tail
-        |> List.map List.length
-        |> List.sum
-
-    writeFunction subroutineName varDecCount
+    writeFunction subroutineName (numVarsOfKind Var)
 
     // do setup according to the type of function
     match subroutineType with
