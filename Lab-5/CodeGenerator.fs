@@ -227,6 +227,12 @@ let writeSubroutine className node =
 
     let parameterList = children[3]
 
+    // write parameters to subroutine symbol table
+    getChildren "parameterList" parameterList
+    |> List.iter (fun parameter ->
+        let parameterChildren = getChildren "parameter" parameter
+        addToSymbolTable (getTokenValue Identifier parameterChildren[1]) (getTypeName parameterChildren[0]) Argument)
+
     let userParamLength = getChildren "parameterList" parameterList |> List.length
     // methods also take a `this` param
     let paramLength = userParamLength + (if subroutineType = "method" then 1 else 0)
@@ -244,6 +250,15 @@ let writeSubroutine className node =
     let subroutineBodyChildren = getChildren "subroutineBody" children[4]
 
     let varDecNodes = List.filter (matchNode "varDec") subroutineBodyChildren
+
+    // write local vars to subroutine symbol table
+    varDecNodes
+    |> List.iter (fun varDec ->
+        let varDecChildren = getChildren "varDec" varDec
+
+        varDecChildren
+        |> List.skip 1 // skip only type (`var` kind is thrown away because subroutine varDec only way to get here: no new info)
+        |> List.iter (fun node -> addToSymbolTable (getTokenValue Identifier node) (getTypeName varDecChildren[0]) Var))
 
     // TODO: Maybe use symbol table for this? But this also works
     let varDecCount =
@@ -289,7 +304,22 @@ let writeClass node =
 
     writeData ("// class " + className + "\n")
 
-    // TODO: handle fields
+    // write classVarDecs to class symbol table
+    children
+    |> List.filter (matchNode "classVarDec")
+    |> List.iter (fun classVarDec ->
+        let classVarDecChildren = getChildren "classVarDec" classVarDec
+
+        let kind =
+            match getTokenValue Keyword classVarDecChildren[0] with
+            | "static" -> Static
+            | "field" -> Field
+            | x -> failwithf "Unknown class variable kind %s" x
+
+        classVarDecChildren
+        |> List.skip 2 // skip kind and type
+        |> List.iter (fun node ->
+            addToSymbolTable (getTokenValue Identifier node) (getTypeName classVarDecChildren[1]) kind))
 
     // handle subroutines
     children
