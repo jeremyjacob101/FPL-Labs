@@ -2,6 +2,7 @@ module CodeGenerator
 
 open System.IO
 open Definitions
+open SymbolTable
 
 let mutable writer: StreamWriter option = None
 
@@ -46,6 +47,13 @@ let writeFunction (functionName: string) (numLocals: int) =
 let writeReturn () = writeData "return"
 
 //#endregion
+
+let segmentOfSymbolKind kind =
+    match kind with
+    | Static -> STATIC
+    | Field -> THIS
+    | Argument -> ARG
+    | Var -> LOCAL
 
 let matchNode (expectedKind: string) (node: Node) =
     match node with
@@ -186,6 +194,8 @@ let rec writeStatement node =
     | x -> failwithf "Unknown statement %A" x
 
 let writeSubroutine className node =
+    resetSubScope ()
+
     let children = getChildren "subroutineDec" node
     let subroutineType = getTokenValue Keyword children[0]
     let returnType = getTypeName children[1]
@@ -234,6 +244,8 @@ let writeSubroutine className node =
 
 
 let writeClass node =
+    resetScopes ()
+
     let children = getChildren "class" node
 
     let className = getTokenValue Identifier (children[0])

@@ -95,11 +95,3 @@ let numVarsOfKind kind =
     | Field -> fieldCount
     | Argument -> argumentCount
     | Var -> varCount
-
-// Get segment string for vm kind
-let vmSegmentOf kind =
-    match kind with
-    | Static -> "static"
-    | Field -> "this"
-    | Argument -> "argument"
-    | Var -> "local"
