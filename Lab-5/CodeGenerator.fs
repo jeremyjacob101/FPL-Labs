@@ -81,9 +81,33 @@ let rec writeExpression (node: Node) =
     let children = getChildren "expression" node
     writeTerm children[0]
 
-    if children.Length > 1 then
-        writeTerm children[2]
-        writeOp children[1]
+    // handle a list of operator-term pairs, e.g. `term op term op term ...`, skipping the first term since it has already been written
+    let opTermPairs = List.chunkBySize 2 (List.tail children)
+
+    for pair in opTermPairs do
+        writeTerm pair[1]
+        writeOp pair[0]
+
+and writeSubroutineCall (nodes: Node list) =
+    let subroutineCallPrefix = getChildren "subroutineCallPrefix" nodes[0]
+
+    let functionName =
+        subroutineCallPrefix |> List.map (getTokenValue Identifier) |> String.concat "."
+
+    let thisParam =
+        if subroutineCallPrefix.Length = 1 then
+            Some(POINTER, 0)
+        // TODO: if we are calling a method of another object, pass its address as the `this` param to the method
+        else
+            None
+
+    if thisParam.IsSome then
+        let segment, index = Option.get thisParam
+        writePush segment index
+
+    let expressions = getChildren "expressionList" nodes[1]
+    expressions |> List.iter writeExpression
+    writeCall functionName (expressions.Length + Option.count thisParam)
 
 and writeTerm (node: Node) =
     match node with
@@ -101,16 +125,10 @@ and writeTerm (node: Node) =
         | Token(Symbol, "-") -> writeArithmetic NEG
         | Token(Symbol, "~") -> writeArithmetic NOT
         | _ -> failwithf "Unknown unary operator %A" children[0]
-    | Node("subroutineCall", children) ->
-        let functionName =
-            getChildren "subroutineCallPrefix" children[0]
-            |> List.map (getTokenValue Identifier)
-            |> String.concat "."
-
-        let expressions = getChildren "expressionList" children[1]
-        expressions |> List.iter writeExpression
-        writeCall functionName expressions.Length
+    | Node("subroutineCall", children) -> writeSubroutineCall children
     | Node("expression", _) -> writeExpression node
+    | Node("arrayAccess", _)
+    | Token(StringConst, _)
     | _ -> writeData (sprintf "// unhandled node %A" node)
 
 and writeOp (node: Node) =
@@ -130,8 +148,9 @@ and writeOp (node: Node) =
 let rec writeStatement node =
 
     let writeLetStatement (nodes: Node list) =
+        writeExpression (List.last nodes)
         let varSegment, varIndex = (LOCAL, 0) // TODO: use symbol table
-        writeExpression nodes[1]
+        // TODO: handle array access on the left hand side. Base var is nodes[0], index expression is nodes[1]
         writePop varSegment varIndex
 
     let writeIfStatement (nodes: Node list) =
@@ -221,6 +240,20 @@ let writeSubroutine className node =
         |> List.sum
 
     writeFunction subroutineName varDecCount
+
+    // do setup according to the type of function
+    match subroutineType with
+    | "method" -> // set up "this"
+        writePush ARG 0
+        writePop POINTER 0
+    | "constructor" -> // allocate memory and set up "this"
+        let fieldCount = 1 // FIXME: connect to actual field count
+        writePush CONST fieldCount
+        writeCall "Memory.alloc" 1
+        writePush ARG 0
+        writePop POINTER 0
+    | "function" -> () // no special setup required
+    | _ -> failwithf "Unknown subroutine type %A" subroutineType
 
     let statementsNode =
         List.tryFind (matchNode "statements") subroutineBodyChildren

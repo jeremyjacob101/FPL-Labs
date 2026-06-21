@@ -1,0 +1,144 @@
+<class>
+  <identifier> Main </identifier>
+  <subroutineDec>
+    <keyword> function </keyword>
+    <keyword> void </keyword>
+    <identifier> main </identifier>
+    <parameterList>
+    </parameterList>
+    <subroutineBody>
+      <varDec>
+        <identifier> Array </identifier>
+        <identifier> a </identifier>
+      </varDec>
+      <varDec>
+        <keyword> int </keyword>
+        <identifier> length </identifier>
+      </varDec>
+      <varDec>
+        <keyword> int </keyword>
+        <identifier> i </identifier>
+        <identifier> sum </identifier>
+      </varDec>
+      <statements>
+        <letStatement>
+          <identifier> length </identifier>
+          <expression>
+            <subroutineCall>
+              <subroutineCallPrefix>
+                <identifier> Keyboard </identifier>
+                <identifier> readInt </identifier>
+              </subroutineCallPrefix>
+              <expressionList>
+                <expression>
+                  <stringConstant> How many numbers?  </stringConstant>
+                </expression>
+              </expressionList>
+            </subroutineCall>
+          </expression>
+        </letStatement>
+        <letStatement>
+          <identifier> a </identifier>
+          <expression>
+            <subroutineCall>
+              <subroutineCallPrefix>
+                <identifier> Array </identifier>
+                <identifier> new </identifier>
+              </subroutineCallPrefix>
+              <expressionList>
+                <expression>
+                  <identifier> length </identifier>
+                </expression>
+              </expressionList>
+            </subroutineCall>
+          </expression>
+        </letStatement>
+        <letStatement>
+          <identifier> i </identifier>
+          <expression>
+            <integerConstant> 0 </integerConstant>
+          </expression>
+        </letStatement>
+        <whileStatement>
+          <expression>
+            <identifier> i </identifier>
+            <symbol> &lt; </symbol>
+            <identifier> length </identifier>
+          </expression>
+          <statements>
+            <letStatement>
+              <identifier> a </identifier>
+              <expression>
+                <identifier> i </identifier>
+              </expression>
+              <expression>
+                <subroutineCall>
+                  <subroutineCallPrefix>
+                    <identifier> Keyboard </identifier>
+                    <identifier> readInt </identifier>
+                  </subroutineCallPrefix>
+                  <expressionList>
+                    <expression>
+                      <stringConstant> Enter a number:  </stringConstant>
+                    </expression>
+                  </expressionList>
+                </subroutineCall>
+              </expression>
+            </letStatement>
+            <letStatement>
+              <identifier> sum </identifier>
+              <expression>
+                <identifier> sum </identifier>
+                <symbol> + </symbol>
+                <arrayAccess>
+                  <identifier> a </identifier>
+                  <expression>
+                    <identifier> i </identifier>
+                  </expression>
+                </arrayAccess>
+              </expression>
+            </letStatement>
+            <letStatement>
+              <identifier> i </identifier>
+              <expression>
+                <identifier> i </identifier>
+                <symbol> + </symbol>
+                <integerConstant> 1 </integerConstant>
+              </expression>
+            </letStatement>
+          </statements>
+        </whileStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Output </identifier>
+              <identifier> printString </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <stringConstant> The average is  </stringConstant>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <doStatement>
+          <subroutineCall>
+            <subroutineCallPrefix>
+              <identifier> Output </identifier>
+              <identifier> printInt </identifier>
+            </subroutineCallPrefix>
+            <expressionList>
+              <expression>
+                <identifier> sum </identifier>
+                <symbol> / </symbol>
+                <identifier> length </identifier>
+              </expression>
+            </expressionList>
+          </subroutineCall>
+        </doStatement>
+        <returnStatement>
+        </returnStatement>
+      </statements>
+    </subroutineBody>
+  </subroutineDec>
+</class>
