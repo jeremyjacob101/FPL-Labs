@@ -132,6 +132,7 @@ and writeTerm (node: Node) =
         writeArithmetic NEG // true is represented as -1 in Hack
     | Token(Keyword, "false") -> writePush CONST 0
     | Token(Keyword, "null") -> writePush CONST 0
+    | Token(Keyword, "this") -> writePush POINTER 0
     | Node("unaryOpTerm", children) ->
         writeTerm children[1]
 
