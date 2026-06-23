@@ -48,7 +48,8 @@ let tryMatchToken (keep: bool) (kind: TokenType) (value: string list) getRest : 
 
 // curried function to create a Node with a list of children
 let makeNode (kind: string) (children: Node list) : Node =
-    let nonEmptyChildren = children |> List.except [ Empty ]
+    // let nonEmptyChildren = children |> List.except [ Empty ]
+    let nonEmptyChildren = children |> List.filter (fun child -> child <> Empty)
     Node(kind, nonEmptyChildren)
 
 //#endregion
