@@ -274,10 +274,9 @@ let writeSubroutine className node =
         writePush ARG 0
         writePop POINTER 0
     | "constructor" -> // allocate memory and set up "this"
-        let fieldCount = 1 // FIXME: connect to actual field count
+        let fieldCount = numVarsOfKind Field
         writePush CONST fieldCount
         writeCall "Memory.alloc" 1
-        writePush ARG 0
         writePop POINTER 0
     | "function" -> () // no special setup required
     | _ -> failwithf "Unknown subroutine type %A" subroutineType
