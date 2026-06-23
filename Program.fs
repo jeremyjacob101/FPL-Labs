@@ -38,8 +38,8 @@ let main argv =
 
         printfn "Generating code for %s at %s..." path outputPath
 
-        let xmlContent = writeNode 0 tree
-        File.WriteAllText(xmlOutputPath, xmlContent + "\n")
+        // let xmlContent = writeNode 0 tree
+        // File.WriteAllText(xmlOutputPath, xmlContent + "\n")
 
         let f = File.Open(outputPath, FileMode.Create, FileAccess.Write)
         writeProgram f tree

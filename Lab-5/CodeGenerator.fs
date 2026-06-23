@@ -26,11 +26,22 @@ let writeData (text: string) =
 
 //#region VM command abstractions
 
+let segmentToString segment =
+    match segment with
+    | CONST -> "constant"
+    | ARG -> "argument"
+    | LOCAL -> "local"
+    | STATIC -> "static"
+    | THIS -> "this"
+    | THAT -> "that"
+    | POINTER -> "pointer"
+    | TEMP -> "temp"
+
 let writePush (segment: Segment) (index: int) =
-    writeData ([ "push"; segment.ToString().ToLower(); index.ToString() ] |> String.concat " ")
+    writeData ([ "push"; segmentToString segment; index.ToString() ] |> String.concat " ")
 
 let writePop (segment: Segment) (index: int) =
-    writeData ([ "pop"; segment.ToString().ToLower(); index.ToString() ] |> String.concat " ")
+    writeData ([ "pop"; segmentToString segment; index.ToString() ] |> String.concat " ")
 
 let writeArithmetic (command: ArithmeticCommand) =
     writeData (command.ToString().ToLower())
