@@ -133,6 +133,14 @@ and writeTerm (node: Node) =
     | Token(Keyword, "false") -> writePush CONST 0
     | Token(Keyword, "null") -> writePush CONST 0
     | Token(Keyword, "this") -> writePush POINTER 0
+    | Token(StringConst, value) ->
+        writePush CONST value.Length
+        writeCall "String.new" 1
+
+        value
+        |> Seq.iter (fun character ->
+            writePush CONST (int character)
+            writeCall "String.appendChar" 2)
     | Node("unaryOpTerm", children) ->
         writeTerm children[1]
 
@@ -143,7 +151,6 @@ and writeTerm (node: Node) =
     | Node("subroutineCall", children) -> writeSubroutineCall children
     | Node("expression", _) -> writeExpression node
     | Node("arrayAccess", _)
-    | Token(StringConst, _)
     | _ -> writeData (sprintf "// unhandled node %A" node)
 
 and writeOp (node: Node) =
