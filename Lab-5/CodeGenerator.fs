@@ -8,6 +8,7 @@ let mutable writer: StreamWriter option = None
 
 let mutable labelCounter = 0
 let mutable currentFunctionName = "" // fully resolved function name eg Main.main
+let mutable currentClassName = ""
 
 let nextLabel prefix =
     labelCounter <- labelCounter + 1
@@ -71,7 +72,6 @@ let getTokenValue (expectedKind: TokenType) (node: Node) =
     | _ -> failwithf "Expected token of kind %A, received %A" expectedKind node
 
 let getTypeName node =
-    // TODO: integrate with symbol table
     match node with
     | Token(Identifier, value) -> value
     | Token(Keyword, value) ->
@@ -105,15 +105,20 @@ let rec writeExpression (node: Node) =
 and writeSubroutineCall (nodes: Node list) =
     let subroutineCallPrefix = getChildren "subroutineCallPrefix" nodes[0]
 
-    let functionName =
-        subroutineCallPrefix |> List.map (getTokenValue Identifier) |> String.concat "."
+    let prefixParts = subroutineCallPrefix |> List.map (getTokenValue Identifier)
 
-    let thisParam =
-        if subroutineCallPrefix.Length = 1 then
-            Some(POINTER, 0)
-        // TODO: if we are calling a method of another object, pass its address as the `this` param to the method
-        else
-            None
+    let functionName, thisParam =
+        match prefixParts with
+        // if method on current object
+        | [ subroutineName ] -> currentClassName + "." + subroutineName, Some(POINTER, 0)
+        // if method on diff object or class function
+        | [ prefixName; subroutineName ] ->
+            // find prefixName entry in symbol table
+            match lookup prefixName with
+            | Some(prefixName, typeName, kind, index) ->
+                typeName + "." + subroutineName, Some(segmentOfSymbolKind kind, index)
+            | None -> prefixName + "." + subroutineName, None
+        | _ -> failwithf "Unexpected subroutine call prefix %A" prefixParts
 
     if thisParam.IsSome then
         let segment, index = Option.get thisParam
@@ -245,6 +250,7 @@ let rec writeStatement node =
 
 let writeSubroutine className node =
     resetSubScope ()
+    currentClassName <- className
 
     let children = getChildren "subroutineDec" node
     let subroutineType = getTokenValue Keyword children[0]
