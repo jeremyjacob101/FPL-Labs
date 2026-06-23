@@ -123,6 +123,11 @@ and writeSubroutineCall (nodes: Node list) =
     expressions |> List.iter writeExpression
     writeCall functionName (expressions.Length + Option.count thisParam)
 
+and writeArrayAddress arrayName indexExpression =
+    writePushVariable arrayName
+    writeExpression indexExpression
+    writeArithmetic ADD
+
 and writeTerm (node: Node) =
     match node with
     | Token(IntConst, value) -> writePush CONST (int value)
@@ -150,7 +155,11 @@ and writeTerm (node: Node) =
         | _ -> failwithf "Unknown unary operator %A" children[0]
     | Node("subroutineCall", children) -> writeSubroutineCall children
     | Node("expression", _) -> writeExpression node
-    | Node("arrayAccess", _)
+    | Node("arrayAccess", children) ->
+        let arrayName = getTokenValue Identifier children[0]
+        writeArrayAddress arrayName children[1]
+        writePop POINTER 1
+        writePush THAT 0
     | _ -> writeData (sprintf "// unhandled node %A" node)
 
 and writeOp (node: Node) =
@@ -170,10 +179,18 @@ and writeOp (node: Node) =
 let rec writeStatement node =
 
     let writeLetStatement (nodes: Node list) =
-        writeExpression (List.last nodes)
-        
-        // TODO: handle array access on the left hand side. Base var is nodes[0], index expression is nodes[1]
-        writePopVariable (getTokenValue Identifier nodes[0])
+        match nodes with
+        | [ Token(Identifier, name); valueExpression ] ->
+            writeExpression valueExpression
+            writePopVariable name
+        | [ Token(Identifier, arrayName); indexExpression; valueExpression ] ->
+            writeArrayAddress arrayName indexExpression
+            writeExpression valueExpression
+            writePop TEMP 0
+            writePop POINTER 1
+            writePush TEMP 0
+            writePop THAT 0
+        | _ -> failwithf "Unexpected let statement %A" nodes
 
     let writeIfStatement (nodes: Node list) =
         let afterLabel = nextLabel "IF_AFTER_"
